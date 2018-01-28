@@ -1,8 +1,14 @@
-package com.example.marinaangelovska.insights;
+package com.example.marinaangelovska.insights.Activity;
 
+import android.Manifest;
+import android.app.Fragment;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,9 +20,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.marinaangelovska.insights.Fragment.ContactsFragment;
+import com.example.marinaangelovska.insights.Fragment.MessagesFragment;
+import com.example.marinaangelovska.insights.R;
+
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int PERMISSIONS_REQUEST_READ_CALL_LOG = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +52,12 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        Toast.makeText(null,"OnCreate",Toast.LENGTH_LONG).show();
+        grantPermissions();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
     @Override
@@ -83,12 +99,24 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+
+
+            ContactsFragment contactsFragment = new ContactsFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, contactsFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
+
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+            MessagesFragment messagesFragment = new MessagesFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, messagesFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
 
         } else if (id == R.id.nav_share) {
 
@@ -99,5 +127,12 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    //grant permissions on run time
+    private void grantPermissions() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_CALL_LOG}, PERMISSIONS_REQUEST_READ_CALL_LOG);
+        }
     }
 }
