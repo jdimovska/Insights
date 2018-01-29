@@ -99,8 +99,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-
-
             ContactsFragment contactsFragment = new ContactsFragment();
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -109,8 +107,6 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.executePendingTransactions();
 
         } else if (id == R.id.nav_gallery) {
-
-
             MessagesFragment messagesFragment = new MessagesFragment();
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

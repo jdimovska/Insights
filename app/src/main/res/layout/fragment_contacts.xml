@@ -1,16 +1,52 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:orientation="vertical" android:layout_width="match_parent"
 android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ContactsFragment" />
-
-    <com.github.mikephil.charting.charts.PieChart
+    <Button
+        android:id="@+id/incoming_btn"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/idPieChart"></com.github.mikephil.charting.charts.PieChart>
+        android:layout_height="wrap_content"
+        android:text="Incoming calls statistics"/>
+
+        <LinearLayout
+        android:id="@+id/incoming_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="350sp"
+            android:id="@+id/idPieChartIncoming"></com.github.mikephil.charting.charts.PieChart>
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/outgoing_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Outgoing calls statistics"/>
+
+    <LinearLayout
+        android:id="@+id/outgoing_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="350sp"
+            android:id="@+id/idPieChartOutgoing"></com.github.mikephil.charting.charts.PieChart>
+
+    </LinearLayout>
 
 </LinearLayout>
+</ScrollView>
