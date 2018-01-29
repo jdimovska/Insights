@@ -42,15 +42,19 @@ import java.util.List;
 
 public class ContactsFragment extends Fragment {
     ContactsService contactsService;
-    PieChart pieChartOutgoing;
-    PieChart pieChartIncoming;
-    Button incomingButton;
-    Button outgoingButton;
-    LinearLayout incomingLayout;
-    LinearLayout outgoingLayout;
+    PieChart pieChartOutgoingDuration;
+    PieChart pieChartIncomingDuration;
+    PieChart pieChartTotalDuration;
+    Button incomingDurationButton;
+    Button outgoingDurationButton;
+    Button totalDurationButton;
+    LinearLayout incomingDurationLayout;
+    LinearLayout outgoingDurationLayout;
+    LinearLayout totalDurationLayout;
 
     List<Node> callListOutgoing;
     List<Node> callListIncoming;
+    List<Node> callListTotal;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -58,24 +62,36 @@ public class ContactsFragment extends Fragment {
         contactsService = new ContactsService(getActivity());
         int callTypeIncoming = CallLog.Calls.INCOMING_TYPE;
         int callTypeOutgoing = CallLog.Calls.OUTGOING_TYPE;
+
         callListIncoming = contactsService.getLongestOutgoingCalls(contactsService.getCallLogDetailsOutgoing(callTypeIncoming));
         callListOutgoing = contactsService.getLongestOutgoingCalls(contactsService.getCallLogDetailsOutgoing(callTypeOutgoing));
 
-        pieChartOutgoing = (PieChart) getView().findViewById(R.id.idPieChartOutgoing);
-        pieChartIncoming = (PieChart) getView().findViewById(R.id.idPieChartIncoming);
+        //callListTotal =  callListIncoming;
+        //callListTotal.addAll(callListOutgoing);
 
-        incomingButton = (Button) getView().findViewById(R.id.incoming_btn);
-        outgoingButton = (Button) getView().findViewById(R.id.outgoing_btn);
-        incomingLayout = (LinearLayout) getView().findViewById(R.id.incoming_layout);
-        outgoingLayout = (LinearLayout) getView().findViewById(R.id.outgoing_layout);
+        initializingViews();
 
-        onClickAccordion(incomingButton, callListIncoming, incomingLayout, pieChartIncoming);
-        onClickAccordion(outgoingButton, callListOutgoing, outgoingLayout, pieChartOutgoing);
+        onClickAccordion(incomingDurationButton, callListIncoming, incomingDurationLayout, pieChartIncomingDuration);
+        onClickAccordion(outgoingDurationButton, callListOutgoing, outgoingDurationLayout, pieChartOutgoingDuration);
+        //onClickAccordion(totalDurationButton, callListTotal, totalDurationLayout, pieChartTotalDuration);
 
 
     }
+    private void initializingViews() {
+        pieChartOutgoingDuration = (PieChart) getView().findViewById(R.id.idPieChartOutgoingDuration);
+        pieChartIncomingDuration = (PieChart) getView().findViewById(R.id.idPieChartIncomingDuration);
+        pieChartTotalDuration = (PieChart) getView().findViewById(R.id.idPieChartTotalDuration);
+
+        incomingDurationButton = (Button) getView().findViewById(R.id.incomingDuration_btn);
+        outgoingDurationButton = (Button) getView().findViewById(R.id.outgoingDuration_btn);
+        totalDurationButton = (Button) getView().findViewById(R.id.totalDuration_btn);
+
+        incomingDurationLayout = (LinearLayout) getView().findViewById(R.id.incomingDuration_layout);
+        outgoingDurationLayout = (LinearLayout) getView().findViewById(R.id.outgoingDuration_layout);
+        totalDurationLayout = (LinearLayout) getView().findViewById(R.id.totalDuration_layout);
+    }
+
     private void onClickAccordion(Button btn, final List<Node> callList, final LinearLayout layout, final PieChart pieChart) {
-        btn.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_manage, 0);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,13 +115,15 @@ public class ContactsFragment extends Fragment {
         int totalOthers = 0;
         if(!callList.isEmpty()) {
             for (int i = 0; i < 4; i++){
-                PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(), callList.get(i).getName() + " " + callList.get(i).getDuration());
+                int minutes = callList.get(i).getDuration() / 60;
+                PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(),
+                                            callList.get(i).getName() + ": " + minutes + " min");
                 pieEntryList.add(newPEntry);
             }
             for (int i = 4; i <callList.size() ; i++){
                 totalOthers += callList.get(i).getDuration();
             }
-            PieEntry newPEntry = new PieEntry(totalOthers, "Others");
+            PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " min");
             pieEntryList.add(newPEntry);
         }
 
@@ -120,6 +138,8 @@ public class ContactsFragment extends Fragment {
         pieChart.setEntryLabelTextSize(7f);
 
         pieChart.highlightValues(null);
+        pieChart.setDescription( null);
+        pieChart.getLegend().setEnabled(false);
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(Color.MAGENTA);
         colors.add(Color.CYAN);

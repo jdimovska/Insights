@@ -6,13 +6,13 @@ android:orientation="vertical" android:layout_width="match_parent"
 android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/incoming_btn"
+        android:id="@+id/incomingDuration_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Incoming calls statistics"/>
+        android:text="Incoming calls duration"/>
 
         <LinearLayout
-        android:id="@+id/incoming_layout"
+        android:id="@+id/incomingDuration_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -22,19 +22,19 @@ android:layout_height="match_parent">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="350sp"
-            android:id="@+id/idPieChartIncoming"></com.github.mikephil.charting.charts.PieChart>
+            android:id="@+id/idPieChartIncomingDuration"></com.github.mikephil.charting.charts.PieChart>
 
     </LinearLayout>
 
 
     <Button
-        android:id="@+id/outgoing_btn"
+        android:id="@+id/outgoingDuration_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Outgoing calls statistics"/>
+        android:text="Outgoing calls duration"/>
 
     <LinearLayout
-        android:id="@+id/outgoing_layout"
+        android:id="@+id/outgoingDuration_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -44,7 +44,28 @@ android:layout_height="match_parent">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="350sp"
-            android:id="@+id/idPieChartOutgoing"></com.github.mikephil.charting.charts.PieChart>
+            android:id="@+id/idPieChartOutgoingDuration"></com.github.mikephil.charting.charts.PieChart>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/totalDuration_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All calls duration"/>
+
+    <LinearLayout
+        android:id="@+id/totalDuration_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="350sp"
+            android:id="@+id/idPieChartTotalDuration"></com.github.mikephil.charting.charts.PieChart>
 
     </LinearLayout>
 
