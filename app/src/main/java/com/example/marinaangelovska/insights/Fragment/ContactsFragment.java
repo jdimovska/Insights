@@ -85,6 +85,7 @@ public class ContactsFragment extends Fragment {
         int callTypeOutgoing = CallLog.Calls.OUTGOING_TYPE;
         int callTypeTotal = 555;
 
+
         callListIncomingDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeIncoming));
         callListOutgoingDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeOutgoing));
 
