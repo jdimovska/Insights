@@ -42,110 +42,202 @@ import java.util.List;
 
 public class ContactsFragment extends Fragment {
     ContactsService contactsService;
+
     PieChart pieChartOutgoingDuration;
     PieChart pieChartIncomingDuration;
     PieChart pieChartTotalDuration;
+
+    PieChart pieChartOutgoingFrequency;
+    PieChart pieChartIncomingFrequency;
+    PieChart pieChartTotalFrequency;
+
     Button incomingDurationButton;
     Button outgoingDurationButton;
     Button totalDurationButton;
+
+    Button incomingFrequencyButton;
+    Button outgoingFrequencyButton;
+    Button totalFrequencyButton;
+
     LinearLayout incomingDurationLayout;
     LinearLayout outgoingDurationLayout;
     LinearLayout totalDurationLayout;
 
-    List<Node> callListOutgoing;
-    List<Node> callListIncoming;
-    List<Node> callListTotal;
+    LinearLayout incomingFrequencyLayout;
+    LinearLayout outgoingFrequencyLayout;
+    LinearLayout totalFrequencyLayout;
+
+    List<Node> callListOutgoingDuration;
+    List<Node> callListIncomingDuration;
+    List<Node> callListTotalDuration;
+
+    List<Node> callListIncomingFrequency;
+    List<Node> callListOutgoingFrequency;
+    List<Node> callListTotalFrequency;
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         contactsService = new ContactsService(getActivity());
+
         int callTypeIncoming = CallLog.Calls.INCOMING_TYPE;
         int callTypeOutgoing = CallLog.Calls.OUTGOING_TYPE;
+        int callTypeTotal = 555;
 
-        callListIncoming = contactsService.getLongestOutgoingCalls(contactsService.getCallLogDetailsOutgoing(callTypeIncoming));
-        callListOutgoing = contactsService.getLongestOutgoingCalls(contactsService.getCallLogDetailsOutgoing(callTypeOutgoing));
+        callListIncomingDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeIncoming));
+        callListOutgoingDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeOutgoing));
 
-        //callListTotal =  callListIncoming;
-        //callListTotal.addAll(callListOutgoing);
+        callListIncomingFrequency = contactsService.getMostFrequentCalls(contactsService.getCallLogDetails(callTypeIncoming));
+        callListOutgoingFrequency = contactsService.getMostFrequentCalls(contactsService.getCallLogDetails(callTypeOutgoing));
+
+        callListTotalDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeTotal));
+        callListTotalFrequency = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeTotal));
 
         initializingViews();
 
-        onClickAccordion(incomingDurationButton, callListIncoming, incomingDurationLayout, pieChartIncomingDuration);
-        onClickAccordion(outgoingDurationButton, callListOutgoing, outgoingDurationLayout, pieChartOutgoingDuration);
-        //onClickAccordion(totalDurationButton, callListTotal, totalDurationLayout, pieChartTotalDuration);
-
-
+        onClickAccordion(incomingDurationButton, callListIncomingDuration, incomingDurationLayout, pieChartIncomingDuration);
+        onClickAccordion(outgoingDurationButton, callListOutgoingDuration, outgoingDurationLayout, pieChartOutgoingDuration);
+        onClickAccordion(outgoingFrequencyButton, callListOutgoingFrequency, outgoingFrequencyLayout, pieChartOutgoingFrequency);
+        onClickAccordion(incomingFrequencyButton, callListIncomingFrequency, incomingFrequencyLayout, pieChartIncomingFrequency);
+        onClickAccordion(totalDurationButton, callListTotalDuration, totalDurationLayout, pieChartTotalDuration);
+        onClickAccordion(totalFrequencyButton, callListTotalFrequency, totalFrequencyLayout, pieChartTotalFrequency);
     }
     private void initializingViews() {
         pieChartOutgoingDuration = (PieChart) getView().findViewById(R.id.idPieChartOutgoingDuration);
         pieChartIncomingDuration = (PieChart) getView().findViewById(R.id.idPieChartIncomingDuration);
         pieChartTotalDuration = (PieChart) getView().findViewById(R.id.idPieChartTotalDuration);
 
+        pieChartOutgoingFrequency = (PieChart) getView().findViewById(R.id.idPieChartOutgoingFrequency);
+        pieChartIncomingFrequency = (PieChart) getView().findViewById(R.id.idPieChartIncomingFrequency);
+        pieChartTotalFrequency = (PieChart) getView().findViewById(R.id.idPieChartTotalFrequency);
+
         incomingDurationButton = (Button) getView().findViewById(R.id.incomingDuration_btn);
         outgoingDurationButton = (Button) getView().findViewById(R.id.outgoingDuration_btn);
         totalDurationButton = (Button) getView().findViewById(R.id.totalDuration_btn);
 
+        incomingFrequencyButton = (Button) getView().findViewById(R.id.incomingFrequency_btn);
+        outgoingFrequencyButton = (Button) getView().findViewById(R.id.outgoingFrequency_btn);
+        totalFrequencyButton = (Button) getView().findViewById(R.id.totalFrequency_btn);
+
         incomingDurationLayout = (LinearLayout) getView().findViewById(R.id.incomingDuration_layout);
         outgoingDurationLayout = (LinearLayout) getView().findViewById(R.id.outgoingDuration_layout);
         totalDurationLayout = (LinearLayout) getView().findViewById(R.id.totalDuration_layout);
+
+        incomingFrequencyLayout = (LinearLayout) getView().findViewById(R.id.incomingFrequency_layout);
+        outgoingFrequencyLayout = (LinearLayout) getView().findViewById(R.id.outgoingFrequency_layout);
+        totalFrequencyLayout = (LinearLayout) getView().findViewById(R.id.totalFrequency_layout);
     }
 
-    private void onClickAccordion(Button btn, final List<Node> callList, final LinearLayout layout, final PieChart pieChart) {
+    private void onClickAccordion(final Button btn, final List<Node> callList, final LinearLayout layout, final PieChart pieChart) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (layout.getVisibility() == View.VISIBLE) {
                     layout.setVisibility(View.GONE);
-
                 } else {
                     layout.setVisibility(View.VISIBLE);
-                    addDataSetToPie(callList, pieChart);
+                    int id = btn.getId();
+                    switch (id) {
+                        case R.id.incomingDuration_btn:  transformDurationDataToPieEntry(callList, pieChart);
+                            break;
+                        case R.id.incomingFrequency_btn:  transformFrequencyDataToPieEntry(callList, pieChart);
+                            break;
+                        case R.id.outgoingDuration_btn:  transformDurationDataToPieEntry(callList, pieChart);
+                            break;
+                        case R.id.outgoingFrequency_btn:  transformFrequencyDataToPieEntry(callList, pieChart);
+                            break;
+                        case R.id.totalDuration_btn:  transformDurationDataToPieEntry(callList, pieChart);
+                            break;
+                        case R.id.totalFrequency_btn:  transformFrequencyDataToPieEntry(callList, pieChart);
+                            break;
+                    }
                 }
             }
 
         });
     }
 
-    private void addDataSetToPie(List<Node> callList, PieChart pieChart) {
-        pieChart.setHoleRadius(10f);
-        pieChart.setTransparentCircleAlpha(0);
+    public void transformDurationDataToPieEntry (List<Node> callList, PieChart pieChart) {
 
         ArrayList<PieEntry> pieEntryList = new ArrayList();
         int totalOthers = 0;
         if(!callList.isEmpty()) {
-            for (int i = 0; i < 4; i++){
-                int minutes = callList.get(i).getDuration() / 60;
-                PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(),
-                                            callList.get(i).getName() + ": " + minutes + " min");
+            if(callList.size() < 4 ) {
+                for (int i = 0; i < callList.size()   ; i++){
+                    int minutes = callList.get(i).getDuration() / 60;
+                    PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(),
+                            callList.get(i).getName() + ": " + minutes + " min");
+                    pieEntryList.add(newPEntry);
+                }
+            } else {
+                for (int i = 0; i < 4 ; i++){
+                    int minutes = callList.get(i).getDuration() / 60;
+                    PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(),
+                            callList.get(i).getName() + ": " + minutes + " min");
+                    pieEntryList.add(newPEntry);
+                }
+                for (int i = 4; i <callList.size() ; i++){
+                    totalOthers += callList.get(i).getDuration();
+                }
+                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers/60 + " min");
                 pieEntryList.add(newPEntry);
             }
-            for (int i = 4; i <callList.size() ; i++){
-                totalOthers += callList.get(i).getDuration();
-            }
-            PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " min");
-            pieEntryList.add(newPEntry);
+
         }
+        addDataSetToPie(callList, pieChart, pieEntryList);
+    }
+
+    public void transformFrequencyDataToPieEntry (List<Node> callList, PieChart pieChart){
+        ArrayList<PieEntry> pieEntryList = new ArrayList();
+        int totalOthers = 0;
+        if(!callList.isEmpty()) {
+            if(callList.size() < 4 ) {
+                for (int i = 0; i < callList.size()   ; i++){
+                    int times = callList.get(i).getOccurrence();
+                    PieEntry newPEntry = new PieEntry(callList.get(i).getOccurrence(),
+                            callList.get(i).getName() + ": " + times + " times");
+                    pieEntryList.add(newPEntry);
+                }
+            } else {
+                for (int i = 0; i < 4 ; i++){
+                    int times = callList.get(i).getOccurrence();
+                    PieEntry newPEntry = new PieEntry(callList.get(i).getOccurrence(),
+                            callList.get(i).getName() + ": " + times + " times");
+                    pieEntryList.add(newPEntry);
+                }
+                for (int i = 4; i <callList.size() ; i++){
+                    totalOthers += callList.get(i).getOccurrence();
+                }
+                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " times");
+                pieEntryList.add(newPEntry);
+            }
+        }
+        addDataSetToPie(callList, pieChart, pieEntryList);
+    }
+
+    private void addDataSetToPie(List<Node> callList, PieChart pieChart, ArrayList<PieEntry> pieEntryList) {
 
         PieDataSet dataSet = new PieDataSet(pieEntryList, null);
         dataSet.setSelectionShift(5f);
         dataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
-
+        pieChart.setHoleRadius(10f);
+        pieChart.setTransparentCircleAlpha(0);
         PieData data = new PieData(dataSet);
         data.setDrawValues(false);
         pieChart.setData(data);
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setEntryLabelTextSize(7f);
+        pieChart.setEntryLabelColor(Color.WHITE);
+        pieChart.setEntryLabelTextSize(10f);
 
         pieChart.highlightValues(null);
         pieChart.setDescription( null);
         pieChart.getLegend().setEnabled(false);
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.MAGENTA);
-        colors.add(Color.CYAN);
-        colors.add(Color.LTGRAY);
-        colors.add(Color.YELLOW);
-        colors.add(Color.GREEN);
+        colors.add(Color.rgb(88,140,155));
+        colors.add(Color.rgb(114,88,77));
+        colors.add(Color.rgb(242,174,114));
+        colors.add(Color.rgb(217, 100,89));
+        colors.add(Color.rgb(140,70,70));
         dataSet.setColors(colors);
         pieChart.invalidate();
     }

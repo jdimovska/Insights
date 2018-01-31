@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 
 import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.Node;
+import com.example.marinaangelovska.insights.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,17 +36,19 @@ public class ContactsService {
         this.context = context;
     }
 
-    public List<Node> getMostFrequentOutgoingCalls(List<Node> callList) {
+    public List<Node> getMostFrequentCalls(List<Node> callList) {
         Collections.sort(callList, new FrequencyComparator());
         return callList;
     }
 
-    public List<Node> getLongestOutgoingCalls( List<Node> callList) {
+    public List<Node> getLongestCalls( List<Node> callList) {
         Collections.sort(callList, new DurationComparator());
         return callList;
     }
 
-    public  List<Node> getCallLogDetailsOutgoing(int callTypeHelper) {
+    public  List<Node> getCallLogDetails(int callTypeHelper) {
+
+
         HashMap<String, List<Call>> callList = new HashMap<String, List<Call>>();
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
             Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
@@ -64,16 +67,27 @@ public class ContactsService {
                 String callDuration = managedCursor.getString(duration);
                 int dircode = Integer.parseInt(callType);
 
-                if(dircode == callTypeHelper) {
-                   if(callList.containsKey(phNumber)) {
-                       callList.get(phNumber).add(new Call(phName, callDayTime, callDuration));
-                   }else {
-                       List<Call> singleCallList =  new ArrayList<>();
-                       singleCallList.add(new Call(phName, callDayTime, callDuration));
-                       callList.put(phNumber, singleCallList);
-                   }
+                if(callTypeHelper == 555) {
+                    if((dircode == CallLog.Calls.INCOMING_TYPE) || (dircode == CallLog.Calls.OUTGOING_TYPE )) {
+                        if(callList.containsKey(phNumber)) {
+                            callList.get(phNumber).add(new Call(phName, callDayTime, callDuration));
+                        }else {
+                            List<Call> singleCallList =  new ArrayList<>();
+                            singleCallList.add(new Call(phName, callDayTime, callDuration));
+                            callList.put(phNumber, singleCallList);
+                        }
+                    }
+                } else {
+                    if(dircode == callTypeHelper) {
+                        if(callList.containsKey(phNumber)) {
+                            callList.get(phNumber).add(new Call(phName, callDayTime, callDuration));
+                        }else {
+                            List<Call> singleCallList =  new ArrayList<>();
+                            singleCallList.add(new Call(phName, callDayTime, callDuration));
+                            callList.put(phNumber, singleCallList);
+                        }
+                    }
                 }
-
             }
             managedCursor.close();
         }

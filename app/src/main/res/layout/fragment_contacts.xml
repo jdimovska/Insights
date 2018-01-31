@@ -69,5 +69,69 @@ android:layout_height="match_parent">
 
     </LinearLayout>
 
+
+    <Button
+        android:id="@+id/outgoingFrequency_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OUTGOING CALLS FREQUENCY"/>
+
+    <LinearLayout
+        android:id="@+id/outgoingFrequency_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="350sp"
+            android:id="@+id/idPieChartOutgoingFrequency"></com.github.mikephil.charting.charts.PieChart>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/incomingFrequency_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="INCOMING CALLS FREQUENCY"/>
+
+    <LinearLayout
+        android:id="@+id/incomingFrequency_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="350sp"
+            android:id="@+id/idPieChartIncomingFrequency"></com.github.mikephil.charting.charts.PieChart>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/totalFrequency_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All calls frequency"/>
+
+    <LinearLayout
+        android:id="@+id/totalFrequency_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="350sp"
+            android:id="@+id/idPieChartTotalFrequency"></com.github.mikephil.charting.charts.PieChart>
+
+    </LinearLayout>
+
 </LinearLayout>
 </ScrollView>
