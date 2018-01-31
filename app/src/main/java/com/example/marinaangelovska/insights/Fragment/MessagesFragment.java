@@ -146,21 +146,30 @@ public class MessagesFragment extends Fragment {
             if(callList.size() < 4 ) {
                 for (int i = 0; i < callList.size()   ; i++){
                     int times = callList.get(i).getFrequency();
+                    String s =  "s";
+                    if (times == 1)
+                        s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(i).getFrequency(),
-                            callList.get(i).getNumber() + ": " + times + " times");
+                            callList.get(i).getNumber() + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                 }
             } else {
                 for (int i = 0; i < 4 ; i++){
                     int times = callList.get(i).getFrequency();
+                    String s =  "s";
+                    if (times == 1)
+                        s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(i).getFrequency(),
-                            callList.get(i).getNumber() + ": " + times + " times");
+                            callList.get(i).getNumber() + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                 }
+                String s =  "s";
                 for (int i = 4; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getFrequency();
+                    if (totalOthers == 1)
+                        s = "";
                 }
-                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " times");
+                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " time" + s);
                 pieEntryList.add(newPEntry);
             }
         }

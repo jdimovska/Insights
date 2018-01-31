@@ -86,9 +86,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -99,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_contacts) {
             ContactsFragment contactsFragment = new ContactsFragment();
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -107,7 +104,7 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
             fragmentManager.executePendingTransactions();
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_messages) {
             MessagesFragment messagesFragment = new MessagesFragment();
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -123,10 +120,6 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.root_layout, peopleFragment);
             fragmentTransaction.commit();
             fragmentManager.executePendingTransactions();
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 

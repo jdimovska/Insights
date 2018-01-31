@@ -176,21 +176,30 @@ public class ContactsFragment extends Fragment {
             if(callList.size() < 4 ) {
                 for (int i = 0; i < callList.size()   ; i++){
                     int times = callList.get(i).getOccurrence();
+                    String s =  "s";
+                    if (times == 1)
+                        s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(i).getOccurrence(),
-                            callList.get(i).getName() + ": " + times + " times");
+                            callList.get(i).getName() + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                 }
             } else {
                 for (int i = 0; i < 4 ; i++){
                     int times = callList.get(i).getOccurrence();
+                    String s =  "s";
+                    if (times == 1)
+                        s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(i).getOccurrence(),
-                            callList.get(i).getName() + ": " + times + " times");
+                            callList.get(i).getName() + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                 }
+                String s =  "s";
                 for (int i = 4; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getOccurrence();
+                    if (totalOthers == 1)
+                        s = "";
                 }
-                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " times");
+                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " time" + s);
                 pieEntryList.add(newPEntry);
             }
         }
