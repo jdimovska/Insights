@@ -9,6 +9,8 @@
             android:id="@+id/incomingFrequency_btn_messages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#F2AE72"
+            android:textColor="#fff"
             android:text="Incoming messages frequency"/>
 
         <LinearLayout
@@ -26,11 +28,36 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/outgoingFrequency_btn_messages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:background="#588C9B"
+            android:text="Outgoing messages frequency"/>
+
+        <LinearLayout
+            android:id="@+id/outgoingFrequency_layout_messages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="350sp"
+                android:id="@+id/idPieChartOutgoingFrequency_messages"></com.github.mikephil.charting.charts.PieChart>
+
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/incomingSize_btn_messages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:background="#72584D"
             android:text="Incoming messages size"/>
 
         <LinearLayout
@@ -45,6 +72,29 @@
                 android:layout_height="wrap_content"
                 android:minHeight="350sp"
                 android:id="@+id/idPieChartIncomingSize_messages"></com.github.mikephil.charting.charts.PieChart>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/outgoingSize_btn_messages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D96459"
+            android:textColor="#fff"
+            android:text="Outgoing messages size"/>
+
+        <LinearLayout
+            android:id="@+id/outgoingSize_layout_messages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="350sp"
+                android:id="@+id/idPieChartOutgoingSize_messages"></com.github.mikephil.charting.charts.PieChart>
 
         </LinearLayout>
 

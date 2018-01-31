@@ -31,7 +31,7 @@ import java.util.List;
 
 public class MessagesService {
 
-    Context context;
+    private Context context;
     public MessagesService(Context context){
         this.context = context;
     }
@@ -47,55 +47,60 @@ public class MessagesService {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public List<NodeMessage> getMessageLogDetails(int messageTypeHelper) {
+    public  HashMap<Integer, List<NodeMessage>> getMessageLogDetails() {
+        List<Integer> messageTypes = new ArrayList<>();
+        messageTypes.add(Telephony.Sms.MESSAGE_TYPE_INBOX);
+        messageTypes.add(Telephony.Sms.MESSAGE_TYPE_SENT);
 
-        HashMap<String, List<Message>> messageList = new HashMap<String, List<Message>>();
-        Toast.makeText(context, "MessagesService", Toast.LENGTH_LONG).show();
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            Cursor managedCursor = context.getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, null);
+        HashMap<Integer, List<NodeMessage>> allTypeMessageList = new HashMap<>();
+        for(int i=0;i<messageTypes.size();i++) {
+            HashMap<String, List<Message>> messageList = new HashMap<String, List<Message>>();
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+                Cursor managedCursor = context.getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, null);
 
-            int body = managedCursor.getColumnIndex(Telephony.Sms.BODY);
-            int phone = managedCursor.getColumnIndex(Telephony.Sms.ADDRESS);
-            int date = managedCursor.getColumnIndex(Telephony.Sms.DATE);
-            int type = managedCursor.getColumnIndex(Telephony.Sms.TYPE);
+                int body = managedCursor.getColumnIndex(Telephony.Sms.BODY);
+                int phone = managedCursor.getColumnIndex(Telephony.Sms.ADDRESS);
+                int date = managedCursor.getColumnIndex(Telephony.Sms.DATE);
+                int type = managedCursor.getColumnIndex(Telephony.Sms.TYPE);
 
-            while (managedCursor.moveToNext()) {
+                while (managedCursor.moveToNext()) {
 
-                String phPhone = managedCursor.getString(phone);
-                String phBody = managedCursor.getString(body);
-                String phDate = managedCursor.getString(date);
-                Date formatedDate = new Date(Long.valueOf(managedCursor.getString(date)));
-                String messageType = managedCursor.getString(type);
-                int dircode = Integer.parseInt(messageType);
+                    String phPhone = managedCursor.getString(phone);
+                    String phBody = managedCursor.getString(body);
+                    String phDate = managedCursor.getString(date);
+                    Date formatedDate = new Date(Long.valueOf(managedCursor.getString(date)));
+                    String messageType = managedCursor.getString(type);
+                    int dircode = Integer.parseInt(messageType);
 
-                if(dircode == messageTypeHelper) {
-                    if(messageList.containsKey(phPhone)) {
-                        messageList.get(phPhone).add(new Message(phPhone, formatedDate, phBody));
-                    }else {
-                        List<Message> singleMessageList =  new ArrayList<>();
-                        singleMessageList.add(new Message(phPhone, formatedDate, phBody));
-                        messageList.put(phPhone, singleMessageList);
+                    if (dircode == messageTypes.get(i)) {
+                        if (messageList.containsKey(phPhone)) {
+                            messageList.get(phPhone).add(new Message(phPhone, formatedDate, phBody));
+                        } else {
+                            List<Message> singleMessageList = new ArrayList<>();
+                            singleMessageList.add(new Message(phPhone, formatedDate, phBody));
+                            messageList.put(phPhone, singleMessageList);
+                        }
                     }
+
+
                 }
-
-
-
+                managedCursor.close();
             }
-            managedCursor.close();
-        }
-        List<NodeMessage> list = new ArrayList<NodeMessage>();
-        Iterator itr = messageList.keySet().iterator();
-        int totalSize = 0;
-        while(itr.hasNext()){
-            totalSize = 0;
-            String key = itr.next().toString();
-            List<Message> helper = messageList.get(key);
-            for(int i=0;i<helper.size();i++){
-                totalSize += helper.get(i).getContent().length();
+            List<NodeMessage> list = new ArrayList<NodeMessage>();
+            Iterator itr = messageList.keySet().iterator();
+            int totalSize = 0;
+            while (itr.hasNext()) {
+                totalSize = 0;
+                String key = itr.next().toString();
+                List<Message> helper = messageList.get(key);
+                for (int j = 0; j < helper.size(); j++) {
+                    totalSize += helper.get(j).getContent().length();
+                }
+                list.add(new NodeMessage(key, totalSize, helper.size()));
             }
-            list.add(new NodeMessage( key, totalSize, helper.size()));
+            allTypeMessageList.put(messageTypes.get(i), list);
         }
-        return list;
+        return allTypeMessageList;
     }
 
     class FrequencyComparator implements Comparator<NodeMessage> {

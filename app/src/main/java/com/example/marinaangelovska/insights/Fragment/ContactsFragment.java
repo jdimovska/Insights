@@ -1,39 +1,24 @@
 package com.example.marinaangelovska.insights.Fragment;
-
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.Node;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.ContactsService;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,89 +30,82 @@ public class ContactsFragment extends Fragment {
 
     PieChart pieChartOutgoingDuration;
     PieChart pieChartIncomingDuration;
-    PieChart pieChartTotalDuration;
-
     PieChart pieChartOutgoingFrequency;
     PieChart pieChartIncomingFrequency;
-    PieChart pieChartTotalFrequency;
+    PieChart pieChartMissed;
 
     Button incomingDurationButton;
     Button outgoingDurationButton;
-    Button totalDurationButton;
-
     Button incomingFrequencyButton;
     Button outgoingFrequencyButton;
-    Button totalFrequencyButton;
+    Button missedButton;
 
     LinearLayout incomingDurationLayout;
     LinearLayout outgoingDurationLayout;
-    LinearLayout totalDurationLayout;
-
     LinearLayout incomingFrequencyLayout;
     LinearLayout outgoingFrequencyLayout;
-    LinearLayout totalFrequencyLayout;
+    LinearLayout missedLayout;
 
     List<Node> callListOutgoingDuration;
     List<Node> callListIncomingDuration;
-    List<Node> callListTotalDuration;
-
     List<Node> callListIncomingFrequency;
     List<Node> callListOutgoingFrequency;
-    List<Node> callListTotalFrequency;
+    List<Node> callListMissed;
 
+    HashMap<Integer, List<Node>> map;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         contactsService = new ContactsService(getActivity());
+        map = contactsService.getCallLogDetails();
 
         int callTypeIncoming = CallLog.Calls.INCOMING_TYPE;
         int callTypeOutgoing = CallLog.Calls.OUTGOING_TYPE;
-        int callTypeTotal = 555;
+        int callTypeMissed = CallLog.Calls.MISSED_TYPE;
 
+        callListIncomingDuration = contactsService.getLongestCalls(map.get(callTypeIncoming));
+        callListOutgoingDuration = contactsService.getLongestCalls(map.get(callTypeOutgoing));
 
-        callListIncomingDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeIncoming));
-        callListOutgoingDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeOutgoing));
+        callListIncomingFrequency = contactsService.getMostFrequentCalls(map.get(callTypeIncoming));
+        callListOutgoingFrequency = contactsService.getMostFrequentCalls(map.get(callTypeOutgoing));
 
-        callListIncomingFrequency = contactsService.getMostFrequentCalls(contactsService.getCallLogDetails(callTypeIncoming));
-        callListOutgoingFrequency = contactsService.getMostFrequentCalls(contactsService.getCallLogDetails(callTypeOutgoing));
+        callListMissed = contactsService.getMostFrequentCalls(map.get(callTypeMissed));
 
-        callListTotalDuration = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeTotal));
-        callListTotalFrequency = contactsService.getLongestCalls(contactsService.getCallLogDetails(callTypeTotal));
 
         initializingViews();
-
         onClickAccordion(incomingDurationButton, callListIncomingDuration, incomingDurationLayout, pieChartIncomingDuration);
         onClickAccordion(outgoingDurationButton, callListOutgoingDuration, outgoingDurationLayout, pieChartOutgoingDuration);
         onClickAccordion(outgoingFrequencyButton, callListOutgoingFrequency, outgoingFrequencyLayout, pieChartOutgoingFrequency);
         onClickAccordion(incomingFrequencyButton, callListIncomingFrequency, incomingFrequencyLayout, pieChartIncomingFrequency);
-        onClickAccordion(totalDurationButton, callListTotalDuration, totalDurationLayout, pieChartTotalDuration);
-        onClickAccordion(totalFrequencyButton, callListTotalFrequency, totalFrequencyLayout, pieChartTotalFrequency);
+        onClickAccordion(missedButton, callListMissed, missedLayout, pieChartMissed);
+
     }
     private void initializingViews() {
         pieChartOutgoingDuration = (PieChart) getView().findViewById(R.id.idPieChartOutgoingDuration);
         pieChartIncomingDuration = (PieChart) getView().findViewById(R.id.idPieChartIncomingDuration);
-        pieChartTotalDuration = (PieChart) getView().findViewById(R.id.idPieChartTotalDuration);
 
         pieChartOutgoingFrequency = (PieChart) getView().findViewById(R.id.idPieChartOutgoingFrequency);
         pieChartIncomingFrequency = (PieChart) getView().findViewById(R.id.idPieChartIncomingFrequency);
-        pieChartTotalFrequency = (PieChart) getView().findViewById(R.id.idPieChartTotalFrequency);
+
+        pieChartMissed = (PieChart) getView().findViewById(R.id.idPieChartMissed);
 
         incomingDurationButton = (Button) getView().findViewById(R.id.incomingDuration_btn);
         outgoingDurationButton = (Button) getView().findViewById(R.id.outgoingDuration_btn);
-        totalDurationButton = (Button) getView().findViewById(R.id.totalDuration_btn);
 
         incomingFrequencyButton = (Button) getView().findViewById(R.id.incomingFrequency_btn);
         outgoingFrequencyButton = (Button) getView().findViewById(R.id.outgoingFrequency_btn);
-        totalFrequencyButton = (Button) getView().findViewById(R.id.totalFrequency_btn);
+
+        missedButton = (Button) getView().findViewById(R.id.missed_btn);
 
         incomingDurationLayout = (LinearLayout) getView().findViewById(R.id.incomingDuration_layout);
         outgoingDurationLayout = (LinearLayout) getView().findViewById(R.id.outgoingDuration_layout);
-        totalDurationLayout = (LinearLayout) getView().findViewById(R.id.totalDuration_layout);
 
         incomingFrequencyLayout = (LinearLayout) getView().findViewById(R.id.incomingFrequency_layout);
         outgoingFrequencyLayout = (LinearLayout) getView().findViewById(R.id.outgoingFrequency_layout);
-        totalFrequencyLayout = (LinearLayout) getView().findViewById(R.id.totalFrequency_layout);
+
+        missedLayout = (LinearLayout) getView().findViewById(R.id.missed_layout);
     }
 
     private void onClickAccordion(final Button btn, final List<Node> callList, final LinearLayout layout, final PieChart pieChart) {
@@ -148,9 +126,7 @@ public class ContactsFragment extends Fragment {
                             break;
                         case R.id.outgoingFrequency_btn:  transformFrequencyDataToPieEntry(callList, pieChart);
                             break;
-                        case R.id.totalDuration_btn:  transformDurationDataToPieEntry(callList, pieChart);
-                            break;
-                        case R.id.totalFrequency_btn:  transformFrequencyDataToPieEntry(callList, pieChart);
+                        case R.id.missed_btn:  transformFrequencyDataToPieEntry(callList, pieChart);
                             break;
                     }
                 }
@@ -234,12 +210,14 @@ public class ContactsFragment extends Fragment {
         pieChart.setDescription( null);
         pieChart.getLegend().setEnabled(false);
         ArrayList<Integer> colors = new ArrayList<>();
+
         colors.add(Color.rgb(88,140,155));
         colors.add(Color.rgb(114,88,77));
         colors.add(Color.rgb(242,174,114));
         colors.add(Color.rgb(217, 100,89));
         colors.add(Color.rgb(140,70,70));
         dataSet.setColors(colors);
+
         pieChart.invalidate();
     }
 

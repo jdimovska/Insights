@@ -9,6 +9,8 @@ android:layout_height="match_parent">
         android:id="@+id/incomingDuration_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#F2AE72"
+        android:textColor="#fff"
         android:text="Incoming calls duration"/>
 
         <LinearLayout
@@ -30,6 +32,8 @@ android:layout_height="match_parent">
     <Button
         android:id="@+id/outgoingDuration_btn"
         android:layout_width="match_parent"
+        android:textColor="#fff"
+        android:background="#588C9B"
         android:layout_height="wrap_content"
         android:text="Outgoing calls duration"/>
 
@@ -49,30 +53,10 @@ android:layout_height="match_parent">
     </LinearLayout>
 
     <Button
-        android:id="@+id/totalDuration_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="All calls duration"/>
-
-    <LinearLayout
-        android:id="@+id/totalDuration_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <com.github.mikephil.charting.charts.PieChart
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="350sp"
-            android:id="@+id/idPieChartTotalDuration"></com.github.mikephil.charting.charts.PieChart>
-
-    </LinearLayout>
-
-
-    <Button
         android:id="@+id/outgoingFrequency_btn"
         android:layout_width="match_parent"
+        android:textColor="#fff"
+        android:background="#72584D"
         android:layout_height="wrap_content"
         android:text="OUTGOING CALLS FREQUENCY"/>
 
@@ -95,6 +79,8 @@ android:layout_height="match_parent">
         android:id="@+id/incomingFrequency_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#D96459"
+        android:textColor="#fff"
         android:text="INCOMING CALLS FREQUENCY"/>
 
     <LinearLayout
@@ -113,13 +99,15 @@ android:layout_height="match_parent">
     </LinearLayout>
 
     <Button
-        android:id="@+id/totalFrequency_btn"
+        android:id="@+id/missed_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All calls frequency"/>
+        android:background="#F2AE72"
+        android:textColor="#fff"
+        android:text="Missed calls"/>
 
     <LinearLayout
-        android:id="@+id/totalFrequency_layout"
+        android:id="@+id/missed_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -129,9 +117,11 @@ android:layout_height="match_parent">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="350sp"
-            android:id="@+id/idPieChartTotalFrequency"></com.github.mikephil.charting.charts.PieChart>
+            android:id="@+id/idPieChartMissed"></com.github.mikephil.charting.charts.PieChart>
 
     </LinearLayout>
+
+
 
 </LinearLayout>
 </ScrollView>

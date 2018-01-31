@@ -46,65 +46,60 @@ public class ContactsService {
         return callList;
     }
 
-    public  List<Node> getCallLogDetails(int callTypeHelper) {
+    public  HashMap<Integer, List<Node>> getCallLogDetails() {
+        List<Integer> callTypes = new ArrayList<>();
+        callTypes.add(CallLog.Calls.INCOMING_TYPE);
+        callTypes.add(CallLog.Calls.OUTGOING_TYPE);
+        callTypes.add(CallLog.Calls.MISSED_TYPE);
 
+        HashMap<Integer, List<Node>> allTypeCallsList = new HashMap<>();
+        for(int i=0; i < callTypes.size(); i++) {
+            HashMap<String, List<Call>> callList = new HashMap<String, List<Call>>();
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+                Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
 
-        HashMap<String, List<Call>> callList = new HashMap<String, List<Call>>();
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
-            Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
+                int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
+                int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
+                int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+                int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+                int name = managedCursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
 
-            int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
-            int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
-            int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
-            int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-            int name = managedCursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+                while (managedCursor.moveToNext()) {
+                    String phNumber = managedCursor.getString(number);
+                    String callType = managedCursor.getString(type);
+                    String phName = managedCursor.getString(name);
+                    Date callDayTime = new Date(Long.valueOf(managedCursor.getString(date)));
+                    String callDuration = managedCursor.getString(duration);
+                    int dircode = Integer.parseInt(callType);
 
-            while (managedCursor.moveToNext()) {
-                String phNumber = managedCursor.getString(number);
-                String callType = managedCursor.getString(type);
-                String phName =  managedCursor.getString(name);
-                Date callDayTime = new Date(Long.valueOf(managedCursor.getString(date)));
-                String callDuration = managedCursor.getString(duration);
-                int dircode = Integer.parseInt(callType);
-
-                if(callTypeHelper == 555) {
-                    if((dircode == CallLog.Calls.INCOMING_TYPE) || (dircode == CallLog.Calls.OUTGOING_TYPE )) {
-                        if(callList.containsKey(phNumber)) {
+                    if (dircode == callTypes.get(i)) {
+                        if (callList.containsKey(phNumber)) {
                             callList.get(phNumber).add(new Call(phName, callDayTime, callDuration));
-                        }else {
-                            List<Call> singleCallList =  new ArrayList<>();
-                            singleCallList.add(new Call(phName, callDayTime, callDuration));
-                            callList.put(phNumber, singleCallList);
-                        }
-                    }
-                } else {
-                    if(dircode == callTypeHelper) {
-                        if(callList.containsKey(phNumber)) {
-                            callList.get(phNumber).add(new Call(phName, callDayTime, callDuration));
-                        }else {
-                            List<Call> singleCallList =  new ArrayList<>();
+                        } else {
+                            List<Call> singleCallList = new ArrayList<>();
                             singleCallList.add(new Call(phName, callDayTime, callDuration));
                             callList.put(phNumber, singleCallList);
                         }
                     }
                 }
+                managedCursor.close();
             }
-            managedCursor.close();
-        }
 
-        List<Node> list = new ArrayList<Node>();
-        Iterator itr = callList.keySet().iterator();
-        int totalDuration = 0;
-        while(itr.hasNext()){
-            totalDuration = 0;
-            String key = itr.next().toString();
-            List<Call> helper = callList.get(key);
-            for(int i=0;i<helper.size();i++){
-                totalDuration += Integer.parseInt(helper.get(i).getDuration());
+            List<Node> list = new ArrayList<Node>();
+            Iterator itr = callList.keySet().iterator();
+            int totalDuration = 0;
+            while (itr.hasNext()) {
+                totalDuration = 0;
+                String key = itr.next().toString();
+                List<Call> helper = callList.get(key);
+                for (int j = 0; j < helper.size(); j++) {
+                    totalDuration += Integer.parseInt(helper.get(j).getDuration());
+                }
+                list.add(new Node(callList.get(key).get(0).getName(), key, callList.get(key).size(), totalDuration));
             }
-            list.add(new Node(callList.get(key).get(0).getName(), key, callList.get(key).size(), totalDuration));
+            allTypeCallsList.put(callTypes.get(i),list);
         }
-        return list;
+        return allTypeCallsList;
     }
 
     class FrequencyComparator implements Comparator<Node> {

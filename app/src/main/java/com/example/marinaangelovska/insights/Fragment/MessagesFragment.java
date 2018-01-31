@@ -27,6 +27,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,36 +38,53 @@ public class MessagesFragment extends Fragment {
     MessagesService messagesService;
 
     PieChart pieChartIncomingFrequency;
+    PieChart pieChartOutgoingFrequency;
+
     PieChart pieChartIncomingSize;
+    PieChart pieChartOutgoingSize;
 
     Button incomingFrequencyButton;
+    Button outgoingFrequencyButton;
+
     Button incomingSizeButton;
+    Button outgoingSizeButton;
 
     LinearLayout incomingFrequencyLayout;
+    LinearLayout outgoingFrequencyLayout;
+
     LinearLayout incomingSizeLayout;
+    LinearLayout outgoingSizeLayout;
 
     List<NodeMessage> messageListIncomingFrequency;
     List<NodeMessage> messageListOutgoingFrequency;
-    List<NodeMessage> messageListTotalFrequency;
 
     List<NodeMessage> messageListIncomingSize;
     List<NodeMessage> messageListOutgoingSize;
-    List<NodeMessage> messageListTotalSize;
 
+    HashMap<Integer, List<NodeMessage>> map;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         messagesService = new MessagesService(getActivity());
-        int messageTypeInbox = Telephony.Sms.MESSAGE_TYPE_INBOX;
+        map = messagesService.getMessageLogDetails();
 
-        messageListIncomingFrequency = messagesService.getMostFrequentMessages(messagesService.getMessageLogDetails(messageTypeInbox));
-        messageListIncomingSize = messagesService.getLongestMessages(messagesService.getMessageLogDetails(messageTypeInbox));
+        int messageTypeInbox = Telephony.Sms.MESSAGE_TYPE_INBOX;
+        int messageTypeSent = Telephony.Sms.MESSAGE_TYPE_SENT;
+
+        messageListIncomingFrequency = messagesService.getMostFrequentMessages(map.get(messageTypeInbox));
+        messageListOutgoingFrequency = messagesService.getMostFrequentMessages(map.get(messageTypeSent));
+
+        messageListIncomingSize = messagesService.getLongestMessages(map.get(messageTypeInbox));
+        messageListOutgoingSize = messagesService.getLongestMessages(map.get(messageTypeSent));
+
         initializingViews();
 
         onClickAccordion(incomingFrequencyButton, messageListIncomingFrequency, incomingFrequencyLayout, pieChartIncomingFrequency);
+        onClickAccordion(outgoingFrequencyButton, messageListOutgoingFrequency, outgoingFrequencyLayout, pieChartOutgoingFrequency);
         onClickAccordion(incomingSizeButton, messageListIncomingSize, incomingSizeLayout, pieChartIncomingSize);
+        onClickAccordion(outgoingSizeButton, messageListOutgoingSize, outgoingSizeLayout, pieChartOutgoingSize);
 
     }
 
@@ -82,7 +100,11 @@ public class MessagesFragment extends Fragment {
                     switch (id) {
                         case R.id.incomingFrequency_btn_messages:  transformFrequencyDataToPieEntry(callList, pieChart);
                             break;
+                        case R.id.outgoingFrequency_btn_messages:  transformFrequencyDataToPieEntry(callList, pieChart);
+                            break;
                         case R.id.incomingSize_btn_messages:  transformSizeDataToPieEntry(callList, pieChart);
+                            break;
+                        case R.id.outgoingSize_btn_messages:  transformSizeDataToPieEntry(callList, pieChart);
                             break;
                     }
                 }
@@ -100,20 +122,20 @@ public class MessagesFragment extends Fragment {
                 for (int i = 0; i < callList.size()   ; i++){
                     int length = callList.get(i).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(i).getSize(),
-                            callList.get(i).getNumber() + ": " + length + " length");
+                            callList.get(i).getNumber() + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                 }
             } else {
                 for (int i = 0; i < 4 ; i++){
                     int length = callList.get(i).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(i).getSize(),
-                            callList.get(i).getNumber() + ": " + length + " length");
+                            callList.get(i).getNumber() + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                 }
                 for (int i = 4; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getSize();
                 }
-                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " length");
+                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " char");
                 pieEntryList.add(newPEntry);
             }
 
@@ -178,13 +200,22 @@ public class MessagesFragment extends Fragment {
 
     private void initializingViews() {
         pieChartIncomingFrequency = (PieChart) getView().findViewById(R.id.idPieChartIncomingFrequency_messages);
+        pieChartOutgoingFrequency = (PieChart) getView().findViewById(R.id.idPieChartOutgoingFrequency_messages);
+
         pieChartIncomingSize = (PieChart) getView().findViewById(R.id.idPieChartIncomingSize_messages);
+        pieChartOutgoingSize = (PieChart) getView().findViewById(R.id.idPieChartOutgoingSize_messages);
 
         incomingFrequencyButton = (Button) getView().findViewById(R.id.incomingFrequency_btn_messages);
+        outgoingFrequencyButton = (Button) getView().findViewById(R.id.outgoingFrequency_btn_messages);
+
         incomingSizeButton = (Button) getView().findViewById(R.id.incomingSize_btn_messages);
+        outgoingSizeButton = (Button) getView().findViewById(R.id.outgoingSize_btn_messages);
 
         incomingFrequencyLayout = (LinearLayout) getView().findViewById(R.id.incomingFrequency_layout_messages);
+        outgoingFrequencyLayout = (LinearLayout) getView().findViewById(R.id.outgoingFrequency_layout_messages);
+
         incomingSizeLayout = (LinearLayout) getView().findViewById(R.id.incomingSize_layout_messages);
+        outgoingSizeLayout = (LinearLayout) getView().findViewById(R.id.outgoingSize_layout_messages);
     }
 
     @Nullable
