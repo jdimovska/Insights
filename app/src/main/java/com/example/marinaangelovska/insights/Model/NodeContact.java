@@ -4,12 +4,12 @@ package com.example.marinaangelovska.insights.Model;
  * Created by Jona Dimovska on 28.1.2018.
  */
 
-public class Node {
+public class NodeContact {
     String name;
     String number;
     int occurrence;
     int duration;
-    public Node(String name, String number, int occurrence, int duration) {
+    public NodeContact(String name, String number, int occurrence, int duration) {
         this.name  = name;
         this.number = number;
         this.occurrence = occurrence;

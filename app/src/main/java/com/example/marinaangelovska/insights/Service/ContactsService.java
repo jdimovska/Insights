@@ -8,8 +8,7 @@ import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 
 import com.example.marinaangelovska.insights.Model.Call;
-import com.example.marinaangelovska.insights.Model.Node;
-import com.example.marinaangelovska.insights.R;
+import com.example.marinaangelovska.insights.Model.NodeContact;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,12 +16,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.Comparator.comparingInt;
 
 /**
  * Created by Jona Dimovska on 28.1.2018.
@@ -36,23 +30,23 @@ public class ContactsService {
         this.context = context;
     }
 
-    public List<Node> getMostFrequentCalls(List<Node> callList) {
+    public List<NodeContact> getMostFrequentCalls(List<NodeContact> callList) {
         Collections.sort(callList, new FrequencyComparator());
         return callList;
     }
 
-    public List<Node> getLongestCalls( List<Node> callList) {
+    public List<NodeContact> getLongestCalls(List<NodeContact> callList) {
         Collections.sort(callList, new DurationComparator());
         return callList;
     }
 
-    public  HashMap<Integer, List<Node>> getCallLogDetails() {
+    public  HashMap<Integer, List<NodeContact>> getCallLogDetails() {
         List<Integer> callTypes = new ArrayList<>();
         callTypes.add(CallLog.Calls.INCOMING_TYPE);
         callTypes.add(CallLog.Calls.OUTGOING_TYPE);
         callTypes.add(CallLog.Calls.MISSED_TYPE);
 
-        HashMap<Integer, List<Node>> allTypeCallsList = new HashMap<>();
+        HashMap<Integer, List<NodeContact>> allTypeCallsList = new HashMap<>();
         for(int i=0; i < callTypes.size(); i++) {
             HashMap<String, List<Call>> callList = new HashMap<String, List<Call>>();
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
@@ -85,7 +79,7 @@ public class ContactsService {
                 managedCursor.close();
             }
 
-            List<Node> list = new ArrayList<Node>();
+            List<NodeContact> list = new ArrayList<NodeContact>();
             Iterator itr = callList.keySet().iterator();
             int totalDuration = 0;
             while (itr.hasNext()) {
@@ -95,24 +89,24 @@ public class ContactsService {
                 for (int j = 0; j < helper.size(); j++) {
                     totalDuration += Integer.parseInt(helper.get(j).getDuration());
                 }
-                list.add(new Node(callList.get(key).get(0).getName(), key, callList.get(key).size(), totalDuration));
+                list.add(new NodeContact(callList.get(key).get(0).getName(), key, callList.get(key).size(), totalDuration));
             }
             allTypeCallsList.put(callTypes.get(i),list);
         }
         return allTypeCallsList;
     }
 
-    class FrequencyComparator implements Comparator<Node> {
+    class FrequencyComparator implements Comparator<NodeContact> {
         @Override
-        public int compare(Node callNodeOne, Node callNodeTwo) {
-            return callNodeOne.getOccurrence() < callNodeTwo.getOccurrence() ? 1 : callNodeOne.getOccurrence() == callNodeTwo.getOccurrence() ? 0 : -1;
+        public int compare(NodeContact callNodeContactOne, NodeContact callNodeContactTwo) {
+            return callNodeContactOne.getOccurrence() < callNodeContactTwo.getOccurrence() ? 1 : callNodeContactOne.getOccurrence() == callNodeContactTwo.getOccurrence() ? 0 : -1;
         }
     }
 
-    class DurationComparator implements Comparator<Node> {
+    class DurationComparator implements Comparator<NodeContact> {
         @Override
-        public int compare(Node callNodeOne, Node callNodeTwo) {
-            return callNodeOne.getDuration() < callNodeTwo.getDuration() ? 1 : callNodeOne.getDuration() == callNodeTwo.getDuration() ? 0 : -1;
+        public int compare(NodeContact callNodeContactOne, NodeContact callNodeContactTwo) {
+            return callNodeContactOne.getDuration() < callNodeContactTwo.getDuration() ? 1 : callNodeContactOne.getDuration() == callNodeContactTwo.getDuration() ? 0 : -1;
         }
     }
 

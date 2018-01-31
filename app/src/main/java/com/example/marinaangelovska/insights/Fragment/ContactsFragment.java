@@ -10,9 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import com.example.marinaangelovska.insights.Model.Node;
+import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.ContactsService;
+import com.example.marinaangelovska.insights.Service.PeopleService;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -27,6 +28,7 @@ import java.util.List;
 
 public class ContactsFragment extends Fragment {
     ContactsService contactsService;
+    PeopleService peopleService;
 
     PieChart pieChartOutgoingDuration;
     PieChart pieChartIncomingDuration;
@@ -46,19 +48,21 @@ public class ContactsFragment extends Fragment {
     LinearLayout outgoingFrequencyLayout;
     LinearLayout missedLayout;
 
-    List<Node> callListOutgoingDuration;
-    List<Node> callListIncomingDuration;
-    List<Node> callListIncomingFrequency;
-    List<Node> callListOutgoingFrequency;
-    List<Node> callListMissed;
+    List<NodeContact> callListOutgoingDuration;
+    List<NodeContact> callListIncomingDuration;
+    List<NodeContact> callListIncomingFrequency;
+    List<NodeContact> callListOutgoingFrequency;
+    List<NodeContact> callListMissed;
 
-    HashMap<Integer, List<Node>> map;
+    HashMap<Integer, List<NodeContact>> map;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         contactsService = new ContactsService(getActivity());
+        peopleService = new PeopleService(getActivity());
+        peopleService.getPeople();
         map = contactsService.getCallLogDetails();
 
         int callTypeIncoming = CallLog.Calls.INCOMING_TYPE;
@@ -108,7 +112,7 @@ public class ContactsFragment extends Fragment {
         missedLayout = (LinearLayout) getView().findViewById(R.id.missed_layout);
     }
 
-    private void onClickAccordion(final Button btn, final List<Node> callList, final LinearLayout layout, final PieChart pieChart) {
+    private void onClickAccordion(final Button btn, final List<NodeContact> callList, final LinearLayout layout, final PieChart pieChart) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +139,7 @@ public class ContactsFragment extends Fragment {
         });
     }
 
-    public void transformDurationDataToPieEntry (List<Node> callList, PieChart pieChart) {
+    public void transformDurationDataToPieEntry (List<NodeContact> callList, PieChart pieChart) {
 
         ArrayList<PieEntry> pieEntryList = new ArrayList();
         int totalOthers = 0;
@@ -165,7 +169,7 @@ public class ContactsFragment extends Fragment {
         addDataSetToPie(callList, pieChart, pieEntryList);
     }
 
-    public void transformFrequencyDataToPieEntry (List<Node> callList, PieChart pieChart){
+    public void transformFrequencyDataToPieEntry (List<NodeContact> callList, PieChart pieChart){
         ArrayList<PieEntry> pieEntryList = new ArrayList();
         int totalOthers = 0;
         if(!callList.isEmpty()) {
@@ -193,7 +197,7 @@ public class ContactsFragment extends Fragment {
         addDataSetToPie(callList, pieChart, pieEntryList);
     }
 
-    private void addDataSetToPie(List<Node> callList, PieChart pieChart, ArrayList<PieEntry> pieEntryList) {
+    private void addDataSetToPie(List<NodeContact> callList, PieChart pieChart, ArrayList<PieEntry> pieEntryList) {
 
         PieDataSet dataSet = new PieDataSet(pieEntryList, null);
         dataSet.setSelectionShift(5f);

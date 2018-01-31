@@ -5,16 +5,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
-import android.provider.CallLog;
 import android.provider.Telephony;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.Message;
-import com.example.marinaangelovska.insights.Model.Node;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 
 import java.sql.Date;

@@ -23,7 +23,9 @@ import android.widget.Toast;
 
 import com.example.marinaangelovska.insights.Fragment.ContactsFragment;
 import com.example.marinaangelovska.insights.Fragment.MessagesFragment;
+import com.example.marinaangelovska.insights.Fragment.PeopleFragment;
 import com.example.marinaangelovska.insights.R;
+import com.example.marinaangelovska.insights.Service.PeopleService;
 
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         int PERMISSION_ALL = 1;
-        String[] PERMISSIONS = {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_SMS};
+        String[] PERMISSIONS = {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS};
 
         if(!hasPermissions(getApplicationContext(), PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
@@ -110,6 +112,15 @@ public class MainActivity extends AppCompatActivity
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.root_layout, messagesFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
+
+        } else if(id == R.id.nav_people) {
+
+            PeopleFragment peopleFragment = new PeopleFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, peopleFragment);
             fragmentTransaction.commit();
             fragmentManager.executePendingTransactions();
 
