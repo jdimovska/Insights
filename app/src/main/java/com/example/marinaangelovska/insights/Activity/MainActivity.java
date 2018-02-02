@@ -1,16 +1,12 @@
 package com.example.marinaangelovska.insights.Activity;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 
 import android.support.v4.app.ActivityCompat;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,15 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.example.marinaangelovska.insights.Fragment.AppsFragment;
 import com.example.marinaangelovska.insights.Fragment.ContactsFragment;
+import com.example.marinaangelovska.insights.Fragment.HomeFragment;
 import com.example.marinaangelovska.insights.Fragment.MessagesFragment;
 import com.example.marinaangelovska.insights.Fragment.PeopleFragment;
 import com.example.marinaangelovska.insights.R;
-import com.example.marinaangelovska.insights.Service.PeopleService;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,7 +42,9 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         int PERMISSION_ALL = 1;
-        String[] PERMISSIONS = {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS};
+        String[] PERMISSIONS = {Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.READ_SMS,
+                Manifest.permission.READ_CONTACTS};
 
         if(!hasPermissions(getApplicationContext(), PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
@@ -57,6 +53,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 
 
     }
@@ -95,8 +92,15 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        if(id == R.id.nav_home) {
+            HomeFragment homeFragment = new HomeFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, homeFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
 
-        if (id == R.id.nav_contacts) {
+        } else if (id == R.id.nav_contacts) {
             ContactsFragment contactsFragment = new ContactsFragment();
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -118,6 +122,14 @@ public class MainActivity extends AppCompatActivity
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.root_layout, peopleFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
+
+        } else if(id == R.id.nav_apps) {
+            AppsFragment appFragment = new AppsFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, appFragment);
             fragmentTransaction.commit();
             fragmentManager.executePendingTransactions();
 

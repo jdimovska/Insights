@@ -20,6 +20,10 @@
             android:id="@+id/nav_messages"
             android:icon="@drawable/ic_message_black_24dp"
             android:title="Messages" />
+        <item
+            android:id="@+id/nav_apps"
+            android:icon="@drawable/ic_icons8_google_mobile"
+            android:title="Applications" />
     </group>
 
 
