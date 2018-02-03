@@ -152,7 +152,8 @@ public class ContactsFragment extends Fragment {
                     pieEntryList.add(newPEntry);
                 }
             } else {
-                for (int i = 0; i < 4 ; i++){
+
+                for (int i = 0; i < 4 ; i++) {
                     int minutes = callList.get(i).getDuration() / 60;
                     PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(),
                             callList.get(i).getName() + ": " + minutes + " min");

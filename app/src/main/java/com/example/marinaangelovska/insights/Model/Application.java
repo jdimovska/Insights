@@ -2,8 +2,6 @@ package com.example.marinaangelovska.insights.Model;
 
 import android.graphics.drawable.Drawable;
 
-import java.sql.Time;
-
 /**
  * Created by marinaangelovska on 2/2/18.
  */
@@ -40,5 +38,6 @@ public class Application {
     public void setIcon(Long time) {
         this.time = time;
     }
+    public void updateTime(Long time) {this.time += time;}
 
 }

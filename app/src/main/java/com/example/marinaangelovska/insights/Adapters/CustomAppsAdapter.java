@@ -52,7 +52,7 @@ public class CustomAppsAdapter extends ArrayAdapter {
 
     void fillUpTextFields(Application application) {
         appName.setText(application.getName());
-        appTime.setText(application.getTime() + "");
+        appTime.setText(application.getTime() + " seconds today");
         appIcon.setImageDrawable(application.getIcon());
     }
 }

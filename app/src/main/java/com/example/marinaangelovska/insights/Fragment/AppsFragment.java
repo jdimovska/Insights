@@ -1,6 +1,7 @@
 package com.example.marinaangelovska.insights.Fragment;
 
 import android.app.Fragment;
+import android.app.usage.UsageEvents;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,13 +46,15 @@ public class AppsFragment extends Fragment {
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public List<UsageStats> getUsageStatistics(int intervalType) {
-        // Get the app statistics since one year ago from the current time.
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -1);
+        Calendar calendar = Calendar.getInstance();
+        long endTime = calendar.getTimeInMillis();
+        calendar.add(Calendar.DATE , -1);
+
+        long startTime = calendar.getTimeInMillis();
 
         List<UsageStats> queryUsageStats = mUsageStatsManager
-                .queryUsageStats(intervalType, cal.getTimeInMillis(),
-                        System.currentTimeMillis());
+                .queryUsageStats(intervalType, startTime,
+                        endTime);
 
         if (queryUsageStats.size() == 0) {
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
@@ -68,13 +72,11 @@ public class AppsFragment extends Fragment {
                 .getSystemService(Context.USAGE_STATS_SERVICE);
 
 
-        usageStatsList = getUsageStatistics(UsageStatsManager.INTERVAL_WEEKLY);
+        usageStatsList = getUsageStatistics(UsageStatsManager.INTERVAL_DAILY);
         appService = new AppsService(getActivity());
-        try {
-            appList = appService.getApps(usageStatsList);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        appList = appService.getApps(usageStatsList);
+
         adapter=new CustomAppsAdapter(getActivity(), appList);
 
         ListView viewList=(ListView)view.findViewById (R.id.appsList);
