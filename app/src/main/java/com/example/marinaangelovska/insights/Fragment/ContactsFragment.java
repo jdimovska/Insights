@@ -63,6 +63,7 @@ public class ContactsFragment extends Fragment {
         contactsService = new ContactsService(getActivity());
         peopleService = new PeopleService(getActivity());
         peopleService.getPeople();
+
         map = contactsService.getCallLogDetails();
 
         int callTypeIncoming = CallLog.Calls.INCOMING_TYPE;
@@ -217,6 +218,7 @@ public class ContactsFragment extends Fragment {
         PieData data = new PieData(dataSet);
         data.setDrawValues(false);
         pieChart.setData(data);
+
         pieChart.setEntryLabelColor(Color.WHITE);
         pieChart.setEntryLabelTextSize(10f);
 

@@ -40,11 +40,18 @@ public class ContactsService {
         return callList;
     }
 
-    public  HashMap<Integer, List<NodeContact>> getCallLogDetails() {
-        List<Integer> callTypes = new ArrayList<>();
+    private  ArrayList<Integer> getCallTypes() {
+        ArrayList<Integer> callTypes = new ArrayList<>();
         callTypes.add(CallLog.Calls.INCOMING_TYPE);
         callTypes.add(CallLog.Calls.OUTGOING_TYPE);
         callTypes.add(CallLog.Calls.MISSED_TYPE);
+        return callTypes;
+
+    }
+
+    public  HashMap<Integer, List<NodeContact>> getCallLogDetails() {
+
+        List<Integer> callTypes = this.getCallTypes();
 
         HashMap<Integer, List<NodeContact>> allTypeCallsList = new HashMap<>();
         for(int i=0; i < callTypes.size(); i++) {
@@ -79,7 +86,7 @@ public class ContactsService {
                 managedCursor.close();
             }
 
-            List<NodeContact> list = new ArrayList<NodeContact>();
+            List<NodeContact> list = new ArrayList<>();
             Iterator itr = callList.keySet().iterator();
             int totalDuration = 0;
             while (itr.hasNext()) {
@@ -91,7 +98,7 @@ public class ContactsService {
                 }
                 list.add(new NodeContact(callList.get(key).get(0).getName(), key, callList.get(key).size(), totalDuration));
             }
-            allTypeCallsList.put(callTypes.get(i),list);
+            allTypeCallsList.put(callTypes.get(i), list);
         }
         return allTypeCallsList;
     }
@@ -110,5 +117,20 @@ public class ContactsService {
         }
     }
 
+    public HashMap<Integer, NodeContact> getInformationForContact(String number) {
 
+        HashMap<Integer, NodeContact> informationForContact = new HashMap<>();
+        ArrayList<Integer> callTypes = this.getCallTypes();
+        List<NodeContact> contactInfoForType;
+        for(int i = 0; i < callTypes.size(); i++) {
+            contactInfoForType = this.getCallLogDetails().get(callTypes.get(i));
+            for(int j = 0; j < contactInfoForType.size(); j++){
+                String numberContact = contactInfoForType.get(j).getNumber();
+                if(number.equals(numberContact)) {
+                    informationForContact.put(callTypes.get(i), new NodeContact(contactInfoForType.get(j).getName(), contactInfoForType.get(j).getNumber(), contactInfoForType.get(j).getOccurrence(), contactInfoForType.get(j).getDuration()));
+                }
+            }
+        }
+       return informationForContact;
+    }
 }
