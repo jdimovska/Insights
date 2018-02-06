@@ -59,7 +59,7 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        int tmp = 0;
         contactsService = new ContactsService(getActivity());
         peopleService = new PeopleService(getActivity());
         peopleService.getPeople();
