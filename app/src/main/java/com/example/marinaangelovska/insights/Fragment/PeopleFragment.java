@@ -1,14 +1,21 @@
 package com.example.marinaangelovska.insights.Fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.marinaangelovska.insights.Adapters.CustomPeopleAdapter;
@@ -17,6 +24,9 @@ import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.PeopleService;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by Jona Dimovska on 31.1.2018.
@@ -28,6 +38,10 @@ public class PeopleFragment extends Fragment {
     ArrayList<Person> peopleList;
     CustomPeopleAdapter adapter;
     View view;
+    ListView viewList;
+    ArrayList<Person> allPeople = new ArrayList<Person>();
+    EditText search;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -37,12 +51,15 @@ public class PeopleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_people, container, false);
+
         peopleService = new PeopleService(getActivity());
         peopleList = peopleService.getPeople();
         adapter=new CustomPeopleAdapter(getActivity(), peopleList);
+        allPeople.addAll(peopleList);
 
-        ListView viewList=(ListView)view.findViewById (R.id.peopleList);
+        viewList = (ListView)view.findViewById (R.id.peopleList);
         viewList.setAdapter(adapter);
+        viewList.setTextFilterEnabled(true);
         adapter.notifyDataSetChanged();
         viewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -59,7 +76,46 @@ public class PeopleFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+
+        doSearch();
+
         return view;
+    }
+
+    private void doSearch() {
+
+        search = (EditText)view.findViewById(R.id.search);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = search.getText().toString().toLowerCase(Locale.getDefault());
+                filter(text);
+            }
+        });
+    }
+    public void filter(String charText) {
+        charText = charText.toLowerCase(Locale.getDefault());
+        peopleList.clear();
+        if (charText.length() == 0) {
+            peopleList.addAll(allPeople);
+        } else {
+            for (Person wp : allPeople) {
+                if (wp.getName().toLowerCase(Locale.getDefault())
+                        .contains(charText)) {
+                    peopleList.add(wp);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override
