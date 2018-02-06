@@ -39,7 +39,7 @@ public class PeopleFragment extends Fragment {
     CustomPeopleAdapter adapter;
     View view;
     ListView viewList;
-    ArrayList<Person> allPeople = new ArrayList<Person>();
+    ArrayList<Person> allPeople;
     EditText search;
 
     @Override
@@ -51,7 +51,8 @@ public class PeopleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_people, container, false);
-
+        search = (EditText)view.findViewById(R.id.search);
+        allPeople = new ArrayList<Person>();
         peopleService = new PeopleService(getActivity());
         peopleList = peopleService.getPeople();
         adapter=new CustomPeopleAdapter(getActivity(), peopleList);
@@ -85,8 +86,6 @@ public class PeopleFragment extends Fragment {
     }
 
     private void doSearch() {
-
-        search = (EditText)view.findViewById(R.id.search);
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -118,6 +117,12 @@ public class PeopleFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        search.setText("");
     }
 
     @Override
