@@ -122,12 +122,14 @@ public class ContactsService {
         HashMap<Integer, NodeContact> informationForContact = new HashMap<>();
         ArrayList<Integer> callTypes = this.getCallTypes();
         List<NodeContact> contactInfoForType;
+        HashMap<Integer, List<NodeContact>> helperMap = this.getCallLogDetails();
         for(int i = 0; i < callTypes.size(); i++) {
-            contactInfoForType = this.getCallLogDetails().get(callTypes.get(i));
+            contactInfoForType = helperMap.get(callTypes.get(i));
             for(int j = 0; j < contactInfoForType.size(); j++){
                 String numberContact = contactInfoForType.get(j).getNumber();
                 if(number.equals(numberContact)) {
                     informationForContact.put(callTypes.get(i), new NodeContact(contactInfoForType.get(j).getName(), contactInfoForType.get(j).getNumber(), contactInfoForType.get(j).getOccurrence(), contactInfoForType.get(j).getDuration()));
+                    break;
                 }
             }
         }

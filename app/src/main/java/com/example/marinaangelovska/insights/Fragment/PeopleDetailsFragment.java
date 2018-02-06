@@ -31,6 +31,21 @@ public class PeopleDetailsFragment extends Fragment {
     View view;
     TextView personName;
     TextView personNumber;
+
+    TextView incomingFrequency;
+    TextView incomingDuration;
+
+    TextView outgoingFrequency;
+    TextView outgoingDuration;
+
+    TextView missedFrequency;
+
+    String name;
+    String number;
+
+
+
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -41,11 +56,12 @@ public class PeopleDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_people_details, container, false);
         contactsService = new ContactsService(getActivity());
-        String number = getArguments().getString("number");
-        HashMap<Integer, NodeContact> info = contactsService.getInformationForContact(number);
+        name = getArguments().getString("name");
+        number = getArguments().getString("number");
+        HashMap<Integer, NodeContact> contactInformation = contactsService.getInformationForContact(number);
         ArrayList<Integer> callTypes = this.getCallTypes();
         setUpTextFields(view);
-        fillUpTextFields(info.get(callTypes.get(0)));
+        fillUpTextFields(contactInformation);
         return view;
     }
 
@@ -58,13 +74,40 @@ public class PeopleDetailsFragment extends Fragment {
     public void setUpTextFields(View view) {
         personName = (TextView) view.findViewById(R.id.personName);
         personNumber = (TextView) view.findViewById(R.id.personNumber);
+        incomingDuration = (TextView) view.findViewById(R.id.incomingDuration);
+        incomingFrequency = (TextView) view.findViewById(R.id.incomingFrequency);
+
+        outgoingDuration = (TextView) view.findViewById(R.id.outgoingDuration);
+        outgoingFrequency = (TextView) view.findViewById(R.id.outgoingFrequency);
+
+        missedFrequency = (TextView) view.findViewById(R.id.missedFrequency);
     }
 
-    void fillUpTextFields(NodeContact contact) {
-        personName.setText(contact.getName());
-        personNumber.setText(contact.getNumber());
-
+    void fillUpTextFields(HashMap<Integer, NodeContact> contactInformation) {
+        personName.setText(name);
+        personNumber.setText(number);
+        if(contactInformation.size()!=0) {
+            ArrayList<Integer> callTypes = this.getCallTypes();
+            for (int i = 0; i < callTypes.size(); i++) {
+                if(contactInformation.containsKey(callTypes.get(i))) {
+                    switch (callTypes.get(i)) {
+                        case 1:
+                            incomingFrequency.setText(String.valueOf(contactInformation.get(callTypes.get(i)).getOccurrence()));
+                            incomingDuration.setText(String.valueOf(contactInformation.get(callTypes.get(i)).getDuration()));
+                            break;
+                        case 2:
+                            outgoingFrequency.setText(String.valueOf(contactInformation.get(callTypes.get(i)).getOccurrence()));
+                            outgoingDuration.setText(String.valueOf(contactInformation.get(callTypes.get(i)).getDuration()));
+                            break;
+                        case 3:
+                            missedFrequency.setText(String.valueOf(contactInformation.get(callTypes.get(i)).getDuration()));
+                            break;
+                    }
+                }
+            }
+        }
     }
+
     private ArrayList<Integer> getCallTypes() {
         ArrayList<Integer> callTypes = new ArrayList<>();
         callTypes.add(CallLog.Calls.INCOMING_TYPE);

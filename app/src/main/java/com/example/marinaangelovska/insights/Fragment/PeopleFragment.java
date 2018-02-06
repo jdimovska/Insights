@@ -66,6 +66,8 @@ public class PeopleFragment extends Fragment {
                                     int position, long id) {
                 Bundle arguments = new Bundle();
                 PeopleDetailsFragment peopleDetailsFragment = new PeopleDetailsFragment();
+                String name = peopleList.get(position).getNumber();
+                arguments.putString("name", name);
                 String number = peopleList.get(position).getNumber();
                 arguments.putString("number", number);
                 peopleDetailsFragment.setArguments(arguments);

@@ -4,16 +4,65 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="5dip">
-
     <TextView
         android:id="@+id/personName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5pt"
         android:text="TextView" />
 
     <TextView
         android:id="@+id/personNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5pt"
         android:text="TextView" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt"
+        android:text="Incoming calls" />
+
+    <TextView
+        android:id="@+id/incomingFrequency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt" />
+
+    <TextView
+        android:id="@+id/incomingDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt"
+        android:text="Outgoing calls" />
+
+    <TextView
+        android:id="@+id/outgoingFrequency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt"/>
+
+    <TextView
+        android:id="@+id/outgoingDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt" />
+
+    <TextView
+        android:id="@+id/missedFrequency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5pt"/>
+
 </LinearLayout>
