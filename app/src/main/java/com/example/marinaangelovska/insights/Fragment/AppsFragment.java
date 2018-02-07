@@ -1,12 +1,14 @@
 package com.example.marinaangelovska.insights.Fragment;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -27,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
+
+
 /**
  * Created by marinaangelovska on 2/2/18.
  */
@@ -43,6 +48,7 @@ public class AppsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public List<UsageStats> getUsageStatistics(int intervalType) {
@@ -71,14 +77,12 @@ public class AppsFragment extends Fragment {
         mUsageStatsManager = (UsageStatsManager) getActivity()
                 .getSystemService(Context.USAGE_STATS_SERVICE);
 
-
         usageStatsList = getUsageStatistics(UsageStatsManager.INTERVAL_DAILY);
         appService = new AppsService(getActivity());
 
         appList = appService.getApps(usageStatsList);
 
         adapter=new CustomAppsAdapter(getActivity(), appList);
-
         ListView viewList=(ListView)view.findViewById (R.id.appsList);
         viewList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -89,6 +93,12 @@ public class AppsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        dialog.hide();
+    }
 }

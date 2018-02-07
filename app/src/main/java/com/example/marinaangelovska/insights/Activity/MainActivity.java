@@ -2,11 +2,15 @@ package com.example.marinaangelovska.insights.Activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,17 +31,25 @@ import com.example.marinaangelovska.insights.Fragment.MessagesFragment;
 import com.example.marinaangelovska.insights.Fragment.PeopleFragment;
 import com.example.marinaangelovska.insights.R;
 
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int PERMISSIONS_REQUEST_READ_CALL_LOG = 100;
     private static final int PERMISSIONS_REQUEST_READ_SMS_LOG = 200;
+    public static ProgressDialog dialog;
+    final Handler finalHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        dialog = new ProgressDialog(MainActivity.this);
+        dialog.setMessage("Applications loading...");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -59,6 +71,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
     protected void hideKeyboard(View view)
     {
         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -124,6 +142,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if(id == R.id.nav_people) {
 
+
             PeopleFragment peopleFragment = new PeopleFragment();
             android.app.FragmentManager fragmentManager = getFragmentManager();
             android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -132,12 +151,21 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.executePendingTransactions();
 
         } else if(id == R.id.nav_apps) {
-            AppsFragment appFragment = new AppsFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, appFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            dialog.show();
+            final Runnable changeView = new Runnable()
+            {
+                public void run()
+                {
+                    AppsFragment appFragment = new AppsFragment();
+                    android.app.FragmentManager fragmentManager = getFragmentManager();
+                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.root_layout, appFragment);
+                    fragmentTransaction.commit();
+                    fragmentManager.executePendingTransactions();
+                }
+            };
+
+            finalHandler.postDelayed(changeView, 5000);
 
         }
 
@@ -145,6 +173,13 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
     //grant permissions on run time
     public static boolean hasPermissions(Context context, String... permissions) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
@@ -156,4 +191,5 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+
 }
