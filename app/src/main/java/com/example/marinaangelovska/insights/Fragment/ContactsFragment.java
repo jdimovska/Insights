@@ -245,11 +245,10 @@ public class ContactsFragment extends Fragment {
         pieChart.getLegend().setEnabled(false);
         ArrayList<Integer> colors = new ArrayList<>();
 
-        colors.add(Color.rgb(88,140,155));
-        colors.add(Color.rgb(114,88,77));
-        colors.add(Color.rgb(242,174,114));
-        colors.add(Color.rgb(217, 100,89));
-        colors.add(Color.rgb(140,70,70));
+        colors.add(Color.rgb(81,68,60));
+        colors.add(Color.rgb(236,189,174));
+        colors.add(Color.rgb(193,131,141));
+        colors.add(Color.rgb(182, 200,227));
         dataSet.setColors(colors);
 
         pieChart.invalidate();

@@ -58,7 +58,7 @@ public class CustomPeopleAdapter extends ArrayAdapter{
 
         //TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.parseColor("#696969"));
 
-        TextDrawable drawable = TextDrawable.builder().buildRound(letters, Color.rgb		(255, 140, 0));
+        TextDrawable drawable = TextDrawable.builder().buildRound(letters, Color.rgb		(193, 131, 141));
         //TextDrawable drawable = TextDrawable.builder().buildRound(letters,Color.rgb(38,174,144));
         personImage.setImageDrawable(drawable);
         return convertView;
@@ -73,5 +73,7 @@ public class CustomPeopleAdapter extends ArrayAdapter{
     void fillUpTextFields(Person person) {
         personName.setText(person.getName());
         personNumber.setText(person.getNumber());
+        personName.setTextColor(Color.rgb(81,68,60));
+        personNumber.setTextColor(Color.rgb(81,68,60));
     }
 }

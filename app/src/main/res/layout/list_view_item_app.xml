@@ -28,6 +28,7 @@
             android:text="Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="16dp"
+            android:textColor="#51443c"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="5dp"/>
     </LinearLayout>
@@ -39,6 +40,7 @@
         android:text="www.firm.com.mk"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:paddingBottom="10dp"
+        android:textColor="#51443c"
         android:textSize="14dp"
         android:layout_marginLeft="20dp"/>
 </LinearLayout>

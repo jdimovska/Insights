@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_icons8_home"
-            android:title="Home" />
+            android:title="Home"/>
         <item
             android:id="@+id/nav_people"
             android:icon="@drawable/ic_people_black_24dp"
@@ -25,6 +25,5 @@
             android:icon="@drawable/ic_icons8_google_mobile"
             android:title="Applications" />
     </group>
-
 
 </menu>

@@ -22,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/peopleList"
-        android:divider="@null"
-        android:dividerHeight="10dp"/>
+        android:divider="#c1838d"
+        android:dividerHeight="1dp"/>
+
 </LinearLayout>

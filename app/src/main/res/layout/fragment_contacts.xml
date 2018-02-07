@@ -1,6 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#f2eae3">
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,7 +11,8 @@ android:layout_height="match_parent">
         android:id="@+id/incomingDuration_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F2AE72"
+        android:background="#c1838d"
+
         android:textColor="#fff"
         android:text="Incoming calls duration"/>
 
@@ -34,7 +36,8 @@ android:layout_height="match_parent">
         android:id="@+id/outgoingDuration_btn"
         android:layout_width="match_parent"
         android:textColor="#fff"
-        android:background="#588C9B"
+        android:background="#c1838d"
+        android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
         android:text="Outgoing calls duration"/>
 
@@ -57,7 +60,8 @@ android:layout_height="match_parent">
         android:id="@+id/outgoingFrequency_btn"
         android:layout_width="match_parent"
         android:textColor="#fff"
-        android:background="#72584D"
+        android:background="#c1838d"
+        android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
         android:text="OUTGOING CALLS FREQUENCY"/>
 
@@ -80,7 +84,8 @@ android:layout_height="match_parent">
         android:id="@+id/incomingFrequency_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#D96459"
+        android:background="#c1838d"
+        android:layout_marginTop="10dp"
         android:textColor="#fff"
         android:text="INCOMING CALLS FREQUENCY"/>
 
@@ -103,7 +108,8 @@ android:layout_height="match_parent">
         android:id="@+id/missed_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F2AE72"
+        android:background="#c1838d"
+        android:layout_marginTop="10dp"
         android:textColor="#fff"
         android:text="Missed calls"/>
 

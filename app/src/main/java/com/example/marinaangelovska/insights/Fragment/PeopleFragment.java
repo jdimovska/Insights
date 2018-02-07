@@ -3,6 +3,7 @@ package com.example.marinaangelovska.insights.Fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -123,6 +124,8 @@ public class PeopleFragment extends Fragment {
     public void onResume() {
         super.onResume();
         search.setText("");
+        search.setTextColor(Color.rgb(81,68,60));
+
     }
 
     @Override
