@@ -48,11 +48,11 @@ public class AppsService {
                     if (context.getPackageManager().getApplicationIcon(tmp.getPackageName()) != null)
                         appList.add(new Application(appName,
                                 context.getPackageManager().getApplicationIcon(tmp.getPackageName()),
-                                (tmp.getTotalTimeInForeground() / 1000) % 60));
+                                (tmp.getTotalTimeInForeground() / 1000L)));
                     else
                         appList.add(new Application(appName,
                                 context.getDrawable(R.drawable.ic_icons8_google_mobile),
-                                (tmp.getTotalTimeInForeground() / 1000) % 60));
+                                (tmp.getTotalTimeInForeground() / 1000L)));
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -63,6 +63,7 @@ public class AppsService {
 
         return appList;
     }
+
     private boolean checkList(String name) {
         for(int i=0;i<appList.size();i++) {
             if(appList.get(i).getName().equals(name)) {

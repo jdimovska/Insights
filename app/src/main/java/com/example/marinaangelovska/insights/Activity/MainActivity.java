@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.executePendingTransactions();
 
         } else if(id == R.id.nav_apps) {
+
             dialog.show();
             final Runnable changeView = new Runnable()
             {
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity
                 }
             };
 
-            finalHandler.postDelayed(changeView, 5000);
+            finalHandler.postDelayed(changeView, 500);
 
         }
 

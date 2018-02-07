@@ -30,14 +30,14 @@ public class ContactsService {
         this.context = context;
     }
 
-    public List<NodeContact> getMostFrequentCalls(List<NodeContact> callList) {
-        Collections.sort(callList, new FrequencyComparator());
-        return callList;
+    public List<NodeContact> getMostFrequentCalls(List<NodeContact> callList1) {
+        Collections.sort(callList1, new FrequencyComparator());
+        return callList1;
     }
 
-    public List<NodeContact> getLongestCalls(List<NodeContact> callList) {
-        Collections.sort(callList, new DurationComparator());
-        return callList;
+    public List<NodeContact> getLongestCalls(List<NodeContact> callList2) {
+        Collections.sort(callList2, new DurationComparator());
+        return callList2;
     }
 
     private  ArrayList<Integer> getCallTypes() {

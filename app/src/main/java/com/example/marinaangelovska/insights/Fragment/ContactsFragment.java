@@ -56,6 +56,10 @@ public class ContactsFragment extends Fragment {
 
     HashMap<Integer, List<NodeContact>> map;
 
+    public List<NodeContact> creatNewInstance(List<NodeContact> temp) {
+        return new ArrayList<NodeContact>(temp);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -69,11 +73,12 @@ public class ContactsFragment extends Fragment {
         int callTypeOutgoing = CallLog.Calls.OUTGOING_TYPE;
         int callTypeMissed = CallLog.Calls.MISSED_TYPE;
 
-        callListIncomingDuration = contactsService.getLongestCalls(map.get(callTypeIncoming));
-        callListOutgoingDuration = contactsService.getLongestCalls(map.get(callTypeOutgoing));
+        callListIncomingDuration = contactsService.getLongestCalls(creatNewInstance(map.get(callTypeIncoming)));
+        callListOutgoingDuration = contactsService.getLongestCalls(creatNewInstance(map.get(callTypeOutgoing)));
 
-        callListIncomingFrequency = contactsService.getMostFrequentCalls(map.get(callTypeIncoming));
-        callListOutgoingFrequency = contactsService.getMostFrequentCalls(map.get(callTypeOutgoing));
+
+        callListIncomingFrequency = contactsService.getMostFrequentCalls(creatNewInstance(map.get(callTypeIncoming)));
+        callListOutgoingFrequency = contactsService.getMostFrequentCalls(creatNewInstance(map.get(callTypeOutgoing)));
 
         callListMissed = contactsService.getMostFrequentCalls(map.get(callTypeMissed));
 
@@ -140,9 +145,12 @@ public class ContactsFragment extends Fragment {
     }
 
     public void transformDurationDataToPieEntry (List<NodeContact> callList, PieChart pieChart) {
-
+        double totalAll = 0;
         ArrayList<PieEntry> pieEntryList = new ArrayList();
         int totalOthers = 0;
+        for(int i=0;i<callList.size();i++) {
+            totalAll += callList.get(i).getDuration();
+        }
         if(!callList.isEmpty()) {
             if(callList.size() < 4 ) {
                 for (int i = 0; i < callList.size()   ; i++){
@@ -152,14 +160,17 @@ public class ContactsFragment extends Fragment {
                     pieEntryList.add(newPEntry);
                 }
             } else {
-
-                for (int i = 0; i < 4 ; i++) {
-                    int minutes = callList.get(i).getDuration() / 60;
-                    PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(),
-                            callList.get(i).getName() + ": " + minutes + " min");
+                int counter = 0;
+                double total = 0;
+                while (total / totalAll < 0.75) {
+                    int minutes = callList.get(counter).getDuration() / 60;
+                    PieEntry newPEntry = new PieEntry(callList.get(counter).getDuration(),
+                            callList.get(counter).getName() + ": " + minutes + " min");
                     pieEntryList.add(newPEntry);
+                    total += callList.get(counter).getDuration();
+                    counter++;
                 }
-                for (int i = 4; i <callList.size() ; i++){
+                for (int i = counter; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getDuration();
                 }
                 PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers/60 + " min");
@@ -173,6 +184,10 @@ public class ContactsFragment extends Fragment {
     public void transformFrequencyDataToPieEntry (List<NodeContact> callList, PieChart pieChart){
         ArrayList<PieEntry> pieEntryList = new ArrayList();
         int totalOthers = 0;
+        double totalAll = 0;
+        for(int i=0;i<callList.size();i++) {
+            totalAll += callList.get(i).getOccurrence();
+        }
         if(!callList.isEmpty()) {
             if(callList.size() < 4 ) {
                 for (int i = 0; i < callList.size()   ; i++){
@@ -185,17 +200,21 @@ public class ContactsFragment extends Fragment {
                     pieEntryList.add(newPEntry);
                 }
             } else {
-                for (int i = 0; i < 4 ; i++){
-                    int times = callList.get(i).getOccurrence();
+                int counter = 0;
+                double total = 0;
+                while (total / totalAll < 0.75) {
+                    int times = callList.get(counter).getOccurrence();
                     String s =  "s";
                     if (times == 1)
                         s = "";
-                    PieEntry newPEntry = new PieEntry(callList.get(i).getOccurrence(),
-                            callList.get(i).getName() + ": " + times + " time" + s);
+                    PieEntry newPEntry = new PieEntry(callList.get(counter).getOccurrence(),
+                            callList.get(counter).getName() + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
+                    total += callList.get(counter).getOccurrence();
+                    counter++;
                 }
                 String s =  "s";
-                for (int i = 4; i <callList.size() ; i++){
+                for (int i = counter; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getOccurrence();
                     if (totalOthers == 1)
                         s = "";
