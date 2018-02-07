@@ -9,6 +9,7 @@ public class NodeContact {
     String number;
     int occurrence;
     int duration;
+
     public NodeContact(String name, String number, int occurrence, int duration) {
         this.name  = name;
         this.number = number;

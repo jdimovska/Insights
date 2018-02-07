@@ -1,3 +1,7 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2eae3">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -5,64 +9,226 @@
     android:layout_height="match_parent"
     android:paddingBottom="5dip">
     <TextView
-        android:id="@+id/personName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5pt"
-        android:text="TextView" />
+        android:gravity="center"
+        android:text="Personal information" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Name: " />
 
+        <TextView
+            android:id="@+id/personName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="TextView" />
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Number: " />
+        <TextView
+            android:id="@+id/personNumber"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
     <TextView
-        android:id="@+id/personNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5pt"
-        android:text="TextView" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5pt"
+        android:gravity="center"
         android:text="Incoming calls" />
 
-    <TextView
-        android:id="@+id/incomingFrequency"
-        android:layout_width="match_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt" />
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Frequency: " />
+        <TextView
+            android:id="@+id/incomingFrequency"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/incomingDuration"
-        android:layout_width="match_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt"/>
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Duration: " />
+        <TextView
+            android:id="@+id/incomingDuration"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5pt"
+        android:gravity="center"
         android:text="Outgoing calls" />
 
-    <TextView
-        android:id="@+id/outgoingFrequency"
-        android:layout_width="match_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt"/>
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Frequency: " />
+        <TextView
+            android:id="@+id/outgoingFrequency"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Duration: " />
+        <TextView
+            android:id="@+id/outgoingDuration"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/outgoingDuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt"/>
+        android:padding="5pt"
+        android:gravity="center"
+        android:text="Missed calls" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Frequency: " />
+        <TextView
+            android:id="@+id/missedFrequency"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt" />
+        android:padding="5pt"
+        android:gravity="center"
+        android:text="Incoming messages" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Frequency: " />
+        <TextView
+            android:id="@+id/incomingFrequencyMessages"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/missedFrequency"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt"/>
+        android:padding="5pt"
+        android:gravity="center"
+        android:text="Outgoing messages" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:layout_weight="0.5"
+            android:text="Frequency: " />
+        <TextView
+            android:id="@+id/outgoingFrequencyMessages"
+            android:layout_width="match_parent"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:padding="5pt"
+            android:text="TextView" />
+    </LinearLayout>
+
+
 
 </LinearLayout>
+</ScrollView>

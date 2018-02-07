@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
+import android.provider.CallLog;
 import android.provider.Telephony;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 
 import com.example.marinaangelovska.insights.Model.Message;
+import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 
 import java.sql.Date;
@@ -43,9 +45,8 @@ public class MessagesService {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public  HashMap<Integer, List<NodeMessage>> getMessageLogDetails() {
-        List<Integer> messageTypes = new ArrayList<>();
-        messageTypes.add(Telephony.Sms.MESSAGE_TYPE_INBOX);
-        messageTypes.add(Telephony.Sms.MESSAGE_TYPE_SENT);
+        List<Integer> messageTypes = this.getMessageTypes();
+
 
         HashMap<Integer, List<NodeMessage>> allTypeMessageList = new HashMap<>();
         for(int i=0;i<messageTypes.size();i++) {
@@ -98,6 +99,26 @@ public class MessagesService {
         return allTypeMessageList;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public HashMap<Integer, NodeMessage> getInformationForContact(String number) {
+
+        HashMap<Integer, NodeMessage> informationForContact = new HashMap<>();
+        ArrayList<Integer> callTypes = this.getMessageTypes();
+        List<NodeMessage> contactInfoForType;
+        HashMap<Integer, List<NodeMessage>> helperMap = this.getMessageLogDetails();
+        for(int i = 0; i < callTypes.size(); i++) {
+            contactInfoForType = helperMap.get(callTypes.get(i));
+            for(int j = 0; j < contactInfoForType.size(); j++){
+                String numberContact = contactInfoForType.get(j).getNumber();
+                if(number.equals(numberContact)) {
+                    informationForContact.put(callTypes.get(i), new NodeMessage(contactInfoForType.get(j).getNumber(), contactInfoForType.get(j).getFrequency(), contactInfoForType.get(j).getSize()));
+                    break;
+                }
+            }
+        }
+        return informationForContact;
+    }
+
     class FrequencyComparator implements Comparator<NodeMessage> {
         @Override
         public int compare(NodeMessage callNodeOne, NodeMessage callNodeTwo) {
@@ -112,5 +133,12 @@ public class MessagesService {
             return callNodeOne.getSize() < callNodeTwo.getSize() ? 1 : callNodeOne.getSize() == callNodeTwo.getSize() ? 0 : -1;
 
         }
+    }
+
+    private  ArrayList<Integer> getMessageTypes() {
+        ArrayList<Integer> messageTypes = new ArrayList<>();
+        messageTypes.add(Telephony.Sms.MESSAGE_TYPE_INBOX);
+        messageTypes.add(Telephony.Sms.MESSAGE_TYPE_SENT);
+        return messageTypes;
     }
 }
