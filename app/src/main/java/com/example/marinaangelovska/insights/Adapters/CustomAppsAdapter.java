@@ -1,6 +1,7 @@
 package com.example.marinaangelovska.insights.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -54,5 +55,7 @@ public class CustomAppsAdapter extends ArrayAdapter {
         appName.setText(application.getName());
         appTime.setText(application.getTime() + " seconds today");
         appIcon.setImageDrawable(application.getIcon());
+        appName.setTextColor(Color.rgb(81,68,60));
+        appTime.setTextColor(Color.rgb(81,68,60));
     }
 }

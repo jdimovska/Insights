@@ -110,8 +110,11 @@ public class MessagesFragment extends Fragment {
     }
 
     public void transformSizeDataToPieEntry (List<NodeMessage> callList, PieChart pieChart) {
-
         ArrayList<PieEntry> pieEntryList = new ArrayList();
+        double totalAll = 0;
+        for(int i=0;i<callList.size();i++) {
+            totalAll += callList.get(i).getSize();
+        }
         int totalOthers = 0;
         if(!callList.isEmpty()) {
             if(callList.size() < 4 ) {
@@ -122,13 +125,17 @@ public class MessagesFragment extends Fragment {
                     pieEntryList.add(newPEntry);
                 }
             } else {
-                for (int i = 0; i < 4 ; i++){
-                    int length = callList.get(i).getSize();
-                    PieEntry newPEntry = new PieEntry(callList.get(i).getSize(),
-                            callList.get(i).getNumber() + ": " + length + " char");
+                int counter = 0;
+                double total = 0;
+                while (total / totalAll < 0.75) {
+                    int length = callList.get(counter).getSize();
+                    PieEntry newPEntry = new PieEntry(callList.get(counter).getSize(),
+                            callList.get(counter).getNumber() + ": " + length + " char");
                     pieEntryList.add(newPEntry);
+                    total += callList.get(counter).getSize();
+                    counter++;
                 }
-                for (int i = 4; i <callList.size() ; i++){
+                for (int i = counter; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getSize();
                 }
                 PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers + " char");
@@ -142,6 +149,10 @@ public class MessagesFragment extends Fragment {
     public void transformFrequencyDataToPieEntry (List<NodeMessage> callList, PieChart pieChart){
         ArrayList<PieEntry> pieEntryList = new ArrayList();
         int totalOthers = 0;
+        double totalAll = 0;
+        for(int i=0;i<callList.size();i++) {
+            totalAll += callList.get(i).getFrequency();
+        }
         if(!callList.isEmpty()) {
             if(callList.size() < 4 ) {
                 for (int i = 0; i < callList.size()   ; i++){
@@ -154,14 +165,18 @@ public class MessagesFragment extends Fragment {
                     pieEntryList.add(newPEntry);
                 }
             } else {
-                for (int i = 0; i < 4 ; i++){
-                    int times = callList.get(i).getFrequency();
+                int counter = 0;
+                double total = 0;
+                while (total / totalAll < 0.75) {
+                    int times = callList.get(counter).getFrequency();
                     String s =  "s";
                     if (times == 1)
                         s = "";
-                    PieEntry newPEntry = new PieEntry(callList.get(i).getFrequency(),
-                            callList.get(i).getNumber() + ": " + times + " time" + s);
+                    PieEntry newPEntry = new PieEntry(callList.get(counter).getFrequency(),
+                            callList.get(counter).getNumber() + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
+                    total += callList.get(counter).getFrequency();
+                    counter++;
                 }
                 String s =  "s";
                 for (int i = 4; i <callList.size() ; i++){
@@ -193,11 +208,11 @@ public class MessagesFragment extends Fragment {
         pieChart.setDescription( null);
         pieChart.getLegend().setEnabled(false);
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.rgb(88,140,155));
-        colors.add(Color.rgb(114,88,77));
-        colors.add(Color.rgb(242,174,114));
-        colors.add(Color.rgb(217, 100,89));
-        colors.add(Color.rgb(140,70,70));
+        colors.add(Color.rgb(81,68,60));
+        colors.add(Color.rgb(236,189,174));
+        colors.add(Color.rgb(193,131,141));
+        colors.add(Color.rgb(182, 200,227));
+
         dataSet.setColors(colors);
         pieChart.invalidate();
     }

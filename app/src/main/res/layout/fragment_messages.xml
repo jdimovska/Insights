@@ -1,6 +1,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#f2eae3">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -9,7 +11,7 @@
             android:id="@+id/incomingFrequency_btn_messages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F2AE72"
+            android:background="#c1838d"
             android:textColor="#fff"
             android:text="Incoming messages frequency"/>
 
@@ -33,7 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:background="#588C9B"
+            android:background="#c1838d"
+            android:layout_marginTop="10dp"
             android:text="Outgoing messages frequency"/>
 
         <LinearLayout
@@ -57,7 +60,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#fff"
-            android:background="#72584D"
+            android:background="#c1838d"
+            android:layout_marginTop="10dp"
             android:text="Incoming messages size"/>
 
         <LinearLayout
@@ -79,7 +83,8 @@
             android:id="@+id/outgoingSize_btn_messages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#D96459"
+            android:background="#c1838d"
+            android:layout_marginTop="10dp"
             android:textColor="#fff"
             android:text="Outgoing messages size"/>
 
