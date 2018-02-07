@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.MessagesService;
@@ -69,11 +70,11 @@ public class MessagesFragment extends Fragment {
         int messageTypeInbox = Telephony.Sms.MESSAGE_TYPE_INBOX;
         int messageTypeSent = Telephony.Sms.MESSAGE_TYPE_SENT;
 
-        messageListIncomingFrequency = messagesService.getMostFrequentMessages(map.get(messageTypeInbox));
-        messageListOutgoingFrequency = messagesService.getMostFrequentMessages(map.get(messageTypeSent));
+        messageListIncomingFrequency = messagesService.getMostFrequentMessages(creatNewInstance(map.get(messageTypeInbox)));
+        messageListOutgoingFrequency = messagesService.getMostFrequentMessages(creatNewInstance(map.get(messageTypeSent)));
 
-        messageListIncomingSize = messagesService.getLongestMessages(map.get(messageTypeInbox));
-        messageListOutgoingSize = messagesService.getLongestMessages(map.get(messageTypeSent));
+        messageListIncomingSize = messagesService.getLongestMessages(creatNewInstance(map.get(messageTypeInbox)));
+        messageListOutgoingSize = messagesService.getLongestMessages(creatNewInstance(map.get(messageTypeSent)));
 
         initializingViews();
 
@@ -83,7 +84,9 @@ public class MessagesFragment extends Fragment {
         onClickAccordion(outgoingSizeButton, messageListOutgoingSize, outgoingSizeLayout, pieChartOutgoingSize);
 
     }
-
+    public List<NodeMessage> creatNewInstance(List<NodeMessage> temp) {
+        return new ArrayList<NodeMessage>(temp);
+    }
     private void onClickAccordion(final Button btn, final List<NodeMessage> callList, final LinearLayout layout, final PieChart pieChart) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
