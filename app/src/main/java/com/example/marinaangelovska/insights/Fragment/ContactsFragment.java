@@ -162,7 +162,7 @@ public class ContactsFragment extends Fragment {
             } else {
                 int counter = 0;
                 double total = 0;
-                while (total / totalAll < 0.75) {
+                while (total / totalAll < 0.85) {
                     int minutes = callList.get(counter).getDuration() / 60;
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getDuration(),
                             callList.get(counter).getName() + ": " + minutes + " min");
@@ -202,7 +202,7 @@ public class ContactsFragment extends Fragment {
             } else {
                 int counter = 0;
                 double total = 0;
-                while (total / totalAll < 0.75) {
+                while (total / totalAll < 0.85) {
                     int times = callList.get(counter).getOccurrence();
                     String s =  "s";
                     if (times == 1)
@@ -246,9 +246,11 @@ public class ContactsFragment extends Fragment {
         ArrayList<Integer> colors = new ArrayList<>();
 
         colors.add(Color.rgb(81,68,60));
+        colors.add(Color.rgb(95, 128, 181));
         colors.add(Color.rgb(236,189,174));
         colors.add(Color.rgb(193,131,141));
         colors.add(Color.rgb(182, 200,227));
+
         dataSet.setColors(colors);
 
         pieChart.invalidate();
