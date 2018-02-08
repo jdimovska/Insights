@@ -109,9 +109,14 @@ public class MessagesService {
         for(int i = 0; i < callTypes.size(); i++) {
             contactInfoForType = helperMap.get(callTypes.get(i));
             for(int j = 0; j < contactInfoForType.size(); j++){
-                String numberContact = contactInfoForType.get(j).getNumber();
-                if(number.equals(numberContact) ) {
-                    informationForContact.put(callTypes.get(i), new NodeMessage(contactInfoForType.get(j).getNumber(), contactInfoForType.get(j).getFrequency(), contactInfoForType.get(j).getSize()));
+                String numberContact;
+                if(contactInfoForType.get(j).getNumber().length() >= 12 ) {
+                     numberContact = contactInfoForType.get(j).getNumber().substring(4,12);
+                } else {
+                     numberContact = contactInfoForType.get(j).getNumber();
+                }
+                if(number.substring(1).equals(numberContact) ) {
+                    informationForContact.put(callTypes.get(i), new NodeMessage(contactInfoForType.get(j).getNumber(),  contactInfoForType.get(j).getSize(), contactInfoForType.get(j).getFrequency()));
                     break;
                 }
             }
