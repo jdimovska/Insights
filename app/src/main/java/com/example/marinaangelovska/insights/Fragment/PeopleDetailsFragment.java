@@ -52,9 +52,6 @@ public class PeopleDetailsFragment extends Fragment {
     String name;
     String number;
 
-
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

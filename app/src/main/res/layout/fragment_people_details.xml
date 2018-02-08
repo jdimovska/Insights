@@ -12,8 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5pt"
+        android:background="@drawable/line"
         android:gravity="center"
-        android:text="Personal information" />
+        android:text="Personal information"
+        android:textStyle="bold"/>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -44,6 +47,7 @@
             android:layout_height="wrap_content"
             android:padding="5pt"
             android:layout_weight="0.5"
+            android:background="@drawable/line"
             android:text="Number: " />
         <TextView
             android:id="@+id/personNumber"
@@ -51,13 +55,16 @@
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:padding="5pt"
+            android:background="@drawable/line"
             android:text="TextView" />
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5pt"
+        android:background="@drawable/line"
         android:gravity="center"
+        android:textStyle="bold"
         android:text="Incoming calls" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -90,6 +97,7 @@
             android:layout_height="wrap_content"
             android:padding="5pt"
             android:layout_weight="0.5"
+            android:background="@drawable/line"
             android:text="Duration: " />
         <TextView
             android:id="@+id/incomingDuration"
@@ -97,6 +105,7 @@
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:padding="5pt"
+            android:background="@drawable/line"
             android:text="TextView" />
     </LinearLayout>
 
@@ -105,12 +114,15 @@
         android:layout_height="wrap_content"
         android:padding="5pt"
         android:gravity="center"
+        android:background="@drawable/line"
+        android:textStyle="bold"
         android:text="Outgoing calls" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         android:weightSum="1" >
         <TextView
             android:layout_width="match_parent"
@@ -131,6 +143,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@drawable/line"
         android:weightSum="1" >
         <TextView
             android:layout_width="match_parent"
@@ -150,8 +163,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5pt"
+        android:background="@drawable/line"
         android:gravity="center"
+        android:padding="5pt"
+        android:textStyle="bold"
         android:text="Missed calls" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -164,6 +179,7 @@
             android:layout_height="wrap_content"
             android:padding="5pt"
             android:layout_weight="0.5"
+            android:background="@drawable/line"
             android:text="Frequency: " />
         <TextView
             android:id="@+id/missedFrequency"
@@ -171,6 +187,7 @@
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:padding="5pt"
+            android:background="@drawable/line"
             android:text="TextView" />
     </LinearLayout>
 
@@ -179,6 +196,8 @@
         android:layout_height="wrap_content"
         android:padding="5pt"
         android:gravity="center"
+        android:background="@drawable/line"
+        android:textStyle="bold"
         android:text="Incoming messages" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -190,6 +209,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5pt"
+            android:background="@drawable/line"
             android:layout_weight="0.5"
             android:text="Frequency: " />
         <TextView
@@ -198,6 +218,7 @@
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:padding="5pt"
+            android:background="@drawable/line"
             android:text="TextView" />
     </LinearLayout>
 
@@ -206,6 +227,8 @@
         android:layout_height="wrap_content"
         android:padding="5pt"
         android:gravity="center"
+        android:background="@drawable/line"
+        android:textStyle="bold"
         android:text="Outgoing messages" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

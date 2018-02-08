@@ -7,13 +7,30 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="@drawable/line"
+            android:layout_gravity="center"
+            android:gravity="center">
         <Button
             android:id="@+id/incomingFrequency_btn_messages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#c1838d"
-            android:textColor="#fff"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/line"
+            android:textColor="#51443c"
+            android:gravity="center"
             android:text="Incoming messages frequency"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
+    </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/incomingFrequency_layout_messages"
@@ -29,15 +46,27 @@
                 android:id="@+id/idPieChartIncomingFrequency_messages"></com.github.mikephil.charting.charts.PieChart>
 
         </LinearLayout>
-
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/line"
+        android:layout_gravity="center"
+        android:gravity="center">
         <Button
             android:id="@+id/outgoingFrequency_btn_messages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:background="#c1838d"
-            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/line"
+            android:textColor="#51443c"
             android:text="Outgoing messages frequency"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
+    </LinearLayout>
 
         <LinearLayout
             android:id="@+id/outgoingFrequency_layout_messages"
@@ -54,15 +83,27 @@
 
         </LinearLayout>
 
-
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/line"
+        android:layout_gravity="center"
+        android:gravity="center">
         <Button
             android:id="@+id/incomingSize_btn_messages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:background="#c1838d"
-            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/line"
+            android:textColor="#51443c"
             android:text="Incoming messages size"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
+    </LinearLayout>
 
         <LinearLayout
             android:id="@+id/incomingSize_layout_messages"
@@ -78,15 +119,28 @@
                 android:id="@+id/idPieChartIncomingSize_messages"></com.github.mikephil.charting.charts.PieChart>
 
         </LinearLayout>
-
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/line"
+        android:layout_gravity="center"
+        android:gravity="center">
         <Button
             android:id="@+id/outgoingSize_btn_messages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#c1838d"
-            android:layout_marginTop="10dp"
-            android:textColor="#fff"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/line"
+            android:textColor="#51443c"
             android:text="Outgoing messages size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:src="@drawable/ic_arrow_drop_down_black_24dp"/>
+    </LinearLayout>
 
         <LinearLayout
             android:id="@+id/outgoingSize_layout_messages"

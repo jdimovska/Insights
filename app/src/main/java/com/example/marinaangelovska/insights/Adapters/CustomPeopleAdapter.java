@@ -48,10 +48,14 @@ public class CustomPeopleAdapter extends ArrayAdapter{
 
         personImage = (ImageView) convertView.findViewById(R.id.personImage);
 
-        String initials= personName.getText().toString();
+        String initials[]= personName.getText().toString().split(" ");
         String letters = "";
-        if (!  initials.isEmpty()) {
-            letters = initials.charAt(0)+"";
+
+        if (initials.length != 0) {
+            if(initials.length > 1)
+                letters = initials[0].substring(0,1) + initials[1].substring(0,1) + "";
+            else
+                letters = initials[0].substring(0,1) + "";
         } else {
             letters = "?";
         }
