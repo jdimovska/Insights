@@ -182,7 +182,7 @@ public class MessagesFragment extends Fragment {
                     counter++;
                 }
                 String s =  "s";
-                for (int i = 4; i <callList.size() ; i++){
+                for (int i = counter; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getFrequency();
                     if (totalOthers == 1)
                         s = "";
