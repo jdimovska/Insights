@@ -71,7 +71,8 @@ public class PeopleFragment extends Fragment {
                 String name = peopleList.get(position).getName();
                 arguments.putString("name", name);
                 String number = peopleList.get(position).getNumber();
-                arguments.putString("number", number);
+                arguments.putString("number", number.replaceAll("\\s+",""));
+
                 peopleDetailsFragment.setArguments(arguments);
                 android.app.FragmentManager fragmentManager = getFragmentManager();
                 android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

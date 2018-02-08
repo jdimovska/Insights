@@ -46,6 +46,7 @@ public class PeopleService {
         while (managedCursor.moveToNext()) {
             String phDisplayName = managedCursor.getString(display_name);
             String phNumber = managedCursor.getString(number);
+            phNumber = phNumber.replaceAll("\\s+","");
             int factor = 0;
             for (int i=0;i < list.size(); i++) {
                 if(list.get(i).getNumber().equals(phNumber)) {
@@ -58,7 +59,6 @@ public class PeopleService {
                 peopleList.add(person);
 
         }
-
 
         Collections.sort(peopleList, new FactorComparator());
         ArrayList<Person> uniqueList = new ArrayList<>();

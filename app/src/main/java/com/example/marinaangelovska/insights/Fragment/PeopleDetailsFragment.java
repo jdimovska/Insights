@@ -68,6 +68,7 @@ public class PeopleDetailsFragment extends Fragment {
 
         name = getArguments().getString("name");
         number = getArguments().getString("number");
+
         HashMap<Integer, NodeContact> contactInformationContacts = contactsService.getInformationForContact(number);
         HashMap<Integer, NodeMessage> contactInformationMessages = messagesService.getInformationForContact(number);
         setUpTextFields(view);

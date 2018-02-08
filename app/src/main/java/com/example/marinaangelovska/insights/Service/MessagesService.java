@@ -110,7 +110,7 @@ public class MessagesService {
             contactInfoForType = helperMap.get(callTypes.get(i));
             for(int j = 0; j < contactInfoForType.size(); j++){
                 String numberContact = contactInfoForType.get(j).getNumber();
-                if(number.equals(numberContact)) {
+                if(number.equals(numberContact) ) {
                     informationForContact.put(callTypes.get(i), new NodeMessage(contactInfoForType.get(j).getNumber(), contactInfoForType.get(j).getFrequency(), contactInfoForType.get(j).getSize()));
                     break;
                 }
