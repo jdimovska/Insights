@@ -8,9 +8,11 @@ public class Person {
 
     String name;
     String number;
-    public Person(String name, String number){
+    int factor;
+    public Person(String name, String number, int factor){
         this.name = name;
         this.number = number;
+        this.factor = factor;
     }
 
     public String getName() {
@@ -27,5 +29,13 @@ public class Person {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public int getFactor() {
+        return factor;
+    }
+
+    public void setFactor(int factor) {
+        this.factor = factor;
     }
 }

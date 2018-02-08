@@ -34,6 +34,7 @@ public class PeopleDetailsFragment extends Fragment {
 
     ContactsService contactsService;
     MessagesService messagesService;
+
     View view;
     TextView personName;
     TextView personNumber;
@@ -122,7 +123,7 @@ public class PeopleDetailsFragment extends Fragment {
                     break;
                 case 3:
                     if(contactInformationContacts.containsKey(callTypes.get(i))) {
-                        missedFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getDuration()));
+                        missedFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getOccurrence()));
                     } else {
                         missedFrequency.setText(String.valueOf(0));
 
