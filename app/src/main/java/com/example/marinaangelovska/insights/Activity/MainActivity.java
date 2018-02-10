@@ -28,6 +28,7 @@ import com.example.marinaangelovska.insights.Fragment.AppsFragment;
 import com.example.marinaangelovska.insights.Fragment.ContactsFragment;
 import com.example.marinaangelovska.insights.Fragment.HomeFragment;
 import com.example.marinaangelovska.insights.Fragment.MessagesFragment;
+import com.example.marinaangelovska.insights.Fragment.NetworkFragment;
 import com.example.marinaangelovska.insights.Fragment.PeopleFragment;
 import com.example.marinaangelovska.insights.R;
 
@@ -174,6 +175,13 @@ public class MainActivity extends AppCompatActivity
 
             finalHandler.postDelayed(changeView, 500);
 
+        } else if(id == R.id.nav_network) {
+            NetworkFragment networkFragment = new NetworkFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, networkFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
