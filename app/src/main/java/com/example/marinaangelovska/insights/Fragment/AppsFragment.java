@@ -65,6 +65,13 @@ public class AppsFragment extends Fragment {
         if (queryUsageStats.size() == 0) {
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
         }
+
+        for(int i = 0; i < queryUsageStats.size(); i++){
+            UsageStats tmp = queryUsageStats.get(i);
+            if(tmp.getTotalTimeInForeground() <= 0){
+                queryUsageStats.remove(i);
+            }
+        }
         return queryUsageStats;
     }
 

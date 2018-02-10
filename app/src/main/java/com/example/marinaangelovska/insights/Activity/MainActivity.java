@@ -70,6 +70,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        HomeFragment homeFragment = new HomeFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, homeFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
     }
 
     @Override

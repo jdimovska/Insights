@@ -11,6 +11,7 @@ import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.NodeContact;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -101,6 +102,28 @@ public class ContactsService {
             allTypeCallsList.put(callTypes.get(i), list);
         }
         return allTypeCallsList;
+    }
+
+    public Long getTodaysCallsDuration(){
+        Long totalDuration = Long.valueOf(0);
+        if(ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED){
+            Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
+
+            int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+            int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+
+            while (managedCursor.moveToNext()) {
+                Date callDayTime = new Date(Long.valueOf(managedCursor.getString(date)));
+                Long callDuration = Long.parseLong(managedCursor.getString(duration));
+                Calendar today = Calendar.getInstance();
+                today.set(Calendar.HOUR_OF_DAY, 0);
+                if(today.getTime().before(callDayTime)){
+                    totalDuration += callDuration;
+                }
+
+            }
+        }
+        return totalDuration;
     }
 
     class FrequencyComparator implements Comparator<NodeContact> {
