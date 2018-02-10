@@ -27,7 +27,10 @@ import com.example.marinaangelovska.insights.Service.AppsService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
 
@@ -50,20 +53,29 @@ public class AppsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public List<UsageStats> getUsageStatistics(int intervalType) {
+    public List<UsageStats> getUsageStatistics() {
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
-        calendar.add(Calendar.DATE , -1);
+        //calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        calendar.add(calendar.getInstance(Locale.US).getFirstDayOfWeek(), -1);
 
         long startTime = calendar.getTimeInMillis();
+        List<UsageStats> queryUsageStats = new ArrayList<>();
 
-        List<UsageStats> queryUsageStats = mUsageStatsManager
-                .queryUsageStats(intervalType, startTime,
+        Map<String, UsageStats> queryUsageStats1 = mUsageStatsManager
+                .queryAndAggregateUsageStats(startTime,
                         endTime);
 
-        if (queryUsageStats.size() == 0) {
+        if (queryUsageStats1.size() == 0) {
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+        }
+
+        Iterator it = queryUsageStats1.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            queryUsageStats.add((UsageStats) pair.getValue());
         }
 
         for(int i = 0; i < queryUsageStats.size(); i++){
@@ -72,6 +84,7 @@ public class AppsFragment extends Fragment {
                 queryUsageStats.remove(i);
             }
         }
+
         return queryUsageStats;
     }
 
@@ -84,7 +97,7 @@ public class AppsFragment extends Fragment {
         mUsageStatsManager = (UsageStatsManager) getActivity()
                 .getSystemService(Context.USAGE_STATS_SERVICE);
 
-        usageStatsList = getUsageStatistics(UsageStatsManager.INTERVAL_DAILY);
+        usageStatsList = getUsageStatistics();
         appService = new AppsService(getActivity());
 
         appList = appService.getApps(usageStatsList);
