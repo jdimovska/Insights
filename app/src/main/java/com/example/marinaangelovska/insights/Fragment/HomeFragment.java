@@ -41,7 +41,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by marinaangelovska on 2/2/18.
@@ -71,19 +73,27 @@ public class HomeFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public List<UsageStats> getUsageStatistics(int intervalType) {
+    public List<UsageStats> getUsageStatistics() {
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
         calendar.add(Calendar.DATE , -1);
 
         long startTime = calendar.getTimeInMillis();
 
-        List<UsageStats> queryUsageStats = mUsageStatsManager
-                .queryUsageStats(intervalType, startTime,
+        List<UsageStats> queryUsageStats = new ArrayList<>();
+
+        Map<String, UsageStats> queryUsageStats1 = mUsageStatsManager
+                .queryAndAggregateUsageStats(startTime,
                         endTime);
 
-        if (queryUsageStats.size() == 0) {
+        if (queryUsageStats1.size() == 0) {
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+        }
+
+        Iterator it = queryUsageStats1.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            queryUsageStats.add((UsageStats) pair.getValue());
         }
 
         for(int i = 0; i < queryUsageStats.size(); i++){
@@ -92,6 +102,7 @@ public class HomeFragment extends Fragment {
                 queryUsageStats.remove(i);
             }
         }
+
         Collections.sort(queryUsageStats, new UsageTimeComparator());
         Collections.reverse(queryUsageStats);
 
@@ -107,7 +118,7 @@ public class HomeFragment extends Fragment {
         //Get app usage
         mUsageStatsManager = (UsageStatsManager) getActivity()
                 .getSystemService(Context.USAGE_STATS_SERVICE);
-        usageStatsList = getUsageStatistics(UsageStatsManager.INTERVAL_DAILY);
+        usageStatsList = getUsageStatistics();
 
         //Initialize services
         appService = new AppsService(getActivity());

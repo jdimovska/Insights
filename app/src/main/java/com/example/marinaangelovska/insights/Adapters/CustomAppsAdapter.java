@@ -53,7 +53,7 @@ public class CustomAppsAdapter extends ArrayAdapter {
 
     void fillUpTextFields(Application application) {
         appName.setText(application.getName());
-        appTime.setText(application.getTime() + " seconds today");
+        appTime.setText(application.getTime() + " seconds this week");
         appIcon.setImageDrawable(application.getIcon());
         appName.setTextColor(Color.rgb(81,68,60));
         appTime.setTextColor(Color.rgb(81,68,60));

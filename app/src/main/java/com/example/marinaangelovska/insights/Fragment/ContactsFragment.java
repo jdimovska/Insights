@@ -216,6 +216,7 @@ public class ContactsFragment extends Fragment {
                 String s =  "s";
                 for (int i = counter; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getOccurrence();
+                    s =  "s";
                     if (totalOthers == 1)
                         s = "";
                 }

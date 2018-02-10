@@ -58,7 +58,6 @@ public class AppsFragment extends Fragment {
     public List<UsageStats> getUsageStatistics() {
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
-        //calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar.add(calendar.getInstance(Locale.US).getFirstDayOfWeek(), -1);
 
         long startTime = calendar.getTimeInMillis();
