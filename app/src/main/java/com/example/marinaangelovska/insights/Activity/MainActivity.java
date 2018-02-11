@@ -1,11 +1,12 @@
 package com.example.marinaangelovska.insights.Activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -18,9 +19,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -32,6 +33,18 @@ import com.example.marinaangelovska.insights.Fragment.NetworkFragment;
 import com.example.marinaangelovska.insights.Fragment.PeopleFragment;
 import com.example.marinaangelovska.insights.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import static com.example.marinaangelovska.insights.Fragment.HomeFragment.unlockedTimesButton;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,6 +54,14 @@ public class MainActivity extends AppCompatActivity
     public static ProgressDialog appDialog;
     public static ProgressDialog homeDialog;
     final Handler finalHandler = new Handler();
+    Calendar cal = Calendar.getInstance();
+    Date currentDate;
+    Date nextDate;
+    SimpleDateFormat sdf;
+
+    int unlockedTimes = 0;
+    PhoneUnlockedReceiver receiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +69,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setUpDialogViews();
+
+        sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            currentDate = sdf.parse(sdf.format(new Date()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -63,17 +92,13 @@ public class MainActivity extends AppCompatActivity
         if(!hasPermissions(getApplicationContext(), PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
-
+        receiver = new PhoneUnlockedReceiver();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        HomeFragment homeFragment = new HomeFragment();
-        android.app.FragmentManager fragmentManager = getFragmentManager();
-        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.root_layout, homeFragment);
-        fragmentTransaction.commit();
-        fragmentManager.executePendingTransactions();
+        loadHomeFragment();
+
     }
     private void setUpDialogViews() {
         appDialog = new ProgressDialog(MainActivity.this);
@@ -85,6 +110,13 @@ public class MainActivity extends AppCompatActivity
         homeDialog.setMessage("Home screen loading...");
         homeDialog.setCancelable(false);
         homeDialog.setInverseBackgroundForced(false);
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
+
     }
 
     @Override
@@ -125,6 +157,20 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+    private void loadHomeFragment() {
+        HomeFragment homeFragment = new HomeFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, homeFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        registerReceiver(receiver, filter);
+
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -137,12 +183,8 @@ public class MainActivity extends AppCompatActivity
             {
                 public void run()
                 {
-                    HomeFragment homeFragment = new HomeFragment();
-                    android.app.FragmentManager fragmentManager = getFragmentManager();
-                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.root_layout, homeFragment);
-                    fragmentTransaction.commit();
-                    fragmentManager.executePendingTransactions();
+                   loadHomeFragment();
+                    unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
                 }
             };
 
@@ -165,7 +207,6 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.executePendingTransactions();
 
         } else if(id == R.id.nav_people) {
-
 
             PeopleFragment peopleFragment = new PeopleFragment();
             android.app.FragmentManager fragmentManager = getFragmentManager();
@@ -223,5 +264,28 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void isNewDay() throws ParseException {
+        nextDate = sdf.parse(sdf.format(new Date()));
+        if(currentDate.compareTo(nextDate) != 0) {
+            currentDate = new Date();
+            unlockedTimes = 0;
+        }
+    }
+    public class PhoneUnlockedReceiver extends BroadcastReceiver {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                isNewDay();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (!intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                unlockedTimes++;
+                unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
 
+            }
+        }
+    }
 }

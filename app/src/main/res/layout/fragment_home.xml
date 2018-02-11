@@ -16,6 +16,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_borders"
                 android:gravity="center"
+                android:clickable="false"
                 android:text="Your activity today"
                 android:textColor="#51443c" />
 
@@ -27,17 +28,31 @@
                 android:layout_height="250dp" />
 
             <Button
+                android:id="@+id/unlockedTimes_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_borders"
+                android:gravity="center"
+                android:clickable="false"
+                android:paddingLeft="10dp"
+                android:text="Today you have unlocked your phone"
+                android:textColor="#51443c"
+                android:layout_marginBottom="15dp"/>
+
+            <Button
                 android:id="@+id/bestFriends_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_borders"
                 android:gravity="center"
+                android:clickable="false"
                 android:text="Your best friends"
                 android:textColor="#51443c" />
 
             <ListView
                 android:id="@+id/favoritePeople_list"
                 android:layout_marginLeft="25dp"
+                android:clickable="false"
                 android:layout_marginRight="25dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

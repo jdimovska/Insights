@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 
 import android.os.Build;
@@ -18,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -69,9 +72,14 @@ public class HomeFragment extends Fragment {
     Long todaysCallsDuration = 0L;
     PieChart pieChart;
 
+    public static Button unlockedTimesButton;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        unlockedTimesButton = (Button) getView().findViewById(R.id.unlockedTimes_button);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -247,4 +255,6 @@ public class HomeFragment extends Fragment {
         super.onStart();
         homeDialog.hide();
     }
+
+
 }
