@@ -27,12 +27,13 @@ import com.example.marinaangelovska.insights.Service.AppsService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
+import static com.example.marinaangelovska.insights.Activity.MainActivity.appDialog;
 
 
 /**
@@ -55,12 +56,14 @@ public class AppsFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public List<UsageStats> getUsageStatistics() {
+    List<UsageStats> getUsageStatistics() {
+        Date today = new Date();
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
         calendar.add(calendar.getInstance(Locale.US).getFirstDayOfWeek(), -1);
 
         long startTime = calendar.getTimeInMillis();
+
         List<UsageStats> queryUsageStats = new ArrayList<>();
 
         Map<String, UsageStats> queryUsageStats1 = mUsageStatsManager
@@ -118,6 +121,6 @@ public class AppsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        dialog.hide();
+        appDialog.hide();
     }
 }

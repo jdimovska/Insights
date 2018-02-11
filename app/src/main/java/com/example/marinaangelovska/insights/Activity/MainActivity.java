@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int PERMISSIONS_REQUEST_READ_CALL_LOG = 100;
     private static final int PERMISSIONS_REQUEST_READ_SMS_LOG = 200;
-    public static ProgressDialog dialog;
+    public static ProgressDialog appDialog;
+    public static ProgressDialog homeDialog;
     final Handler finalHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +47,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        dialog = new ProgressDialog(MainActivity.this);
-        dialog.setMessage("Applications loading...");
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
+        setUpDialogViews();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -77,6 +74,17 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.root_layout, homeFragment);
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
+    }
+    private void setUpDialogViews() {
+        appDialog = new ProgressDialog(MainActivity.this);
+        appDialog.setMessage("Applications loading...");
+        appDialog.setCancelable(false);
+        appDialog.setInverseBackgroundForced(false);
+
+        homeDialog = new ProgressDialog(MainActivity.this);
+        homeDialog.setMessage("Home screen loading...");
+        homeDialog.setCancelable(false);
+        homeDialog.setInverseBackgroundForced(false);
     }
 
     @Override
@@ -124,12 +132,21 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if(id == R.id.nav_home) {
-            HomeFragment homeFragment = new HomeFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, homeFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            homeDialog.show();
+            final Runnable changeView = new Runnable()
+            {
+                public void run()
+                {
+                    HomeFragment homeFragment = new HomeFragment();
+                    android.app.FragmentManager fragmentManager = getFragmentManager();
+                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.root_layout, homeFragment);
+                    fragmentTransaction.commit();
+                    fragmentManager.executePendingTransactions();
+                }
+            };
+
+            finalHandler.postDelayed(changeView, 500);
 
         } else if (id == R.id.nav_contacts) {
             ContactsFragment contactsFragment = new ContactsFragment();
@@ -159,7 +176,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if(id == R.id.nav_apps) {
 
-            dialog.show();
+            appDialog.show();
             final Runnable changeView = new Runnable()
             {
                 public void run()

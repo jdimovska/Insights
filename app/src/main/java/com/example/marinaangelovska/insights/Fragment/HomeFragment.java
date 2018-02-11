@@ -45,6 +45,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.marinaangelovska.insights.Activity.MainActivity.homeDialog;
+
 /**
  * Created by marinaangelovska on 2/2/18.
  */
@@ -73,10 +75,12 @@ public class HomeFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public List<UsageStats> getUsageStatistics() {
+    List<UsageStats> getUsageStatistics() {
+        Date today = new Date();
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
-        calendar.add(Calendar.DATE , -1);
+        calendar.setTime(today);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
 
         long startTime = calendar.getTimeInMillis();
 
@@ -102,9 +106,6 @@ public class HomeFragment extends Fragment {
                 queryUsageStats.remove(i);
             }
         }
-
-        Collections.sort(queryUsageStats, new UsageTimeComparator());
-        Collections.reverse(queryUsageStats);
 
         return queryUsageStats;
     }
@@ -240,5 +241,10 @@ public class HomeFragment extends Fragment {
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        homeDialog.hide();
     }
 }
