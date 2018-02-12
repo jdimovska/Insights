@@ -62,11 +62,14 @@ public class NetworkFragment extends Fragment {
 
     private void setDataForPieChart() {
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
-
-        pieEntries.add(new PieEntry(bytesToMeg(wifiData.get(0)), "WIFI Download: " + humanReadableByteCount(wifiData.get(0), true)));
-        pieEntries.add(new PieEntry(bytesToMeg(wifiData.get(1)), "WIFI Upload: " + humanReadableByteCount(wifiData.get(1), true)));
-        pieEntries.add(new PieEntry(bytesToMeg(mobileData.get(0)), "Mobile Data Download: " + humanReadableByteCount(mobileData.get(0), true)));
-        pieEntries.add(new PieEntry(bytesToMeg(mobileData.get(1)), "Mobile Data Upload: " + humanReadableByteCount(mobileData.get(1), true)));
+        if(wifiData.get(0) > 0)
+            pieEntries.add(new PieEntry(bytesToMeg(wifiData.get(0)), "WIFI Download: " + humanReadableByteCount(wifiData.get(0), true)));
+        if(wifiData.get(1) > 0)
+            pieEntries.add(new PieEntry(bytesToMeg(wifiData.get(1)), "WIFI Upload: " + humanReadableByteCount(wifiData.get(1), true)));
+        if(mobileData.get(0) > 0)
+            pieEntries.add(new PieEntry(bytesToMeg(mobileData.get(0)), "Mobile Data Download: " + humanReadableByteCount(mobileData.get(0), true)));
+        if(mobileData.get(1) > 0)
+            pieEntries.add(new PieEntry(bytesToMeg(mobileData.get(1)), "Mobile Data Upload: " + humanReadableByteCount(mobileData.get(1), true)));
 
         PieDataSet dataSet = new PieDataSet(pieEntries, null);
         dataSet.setSelectionShift(5f);

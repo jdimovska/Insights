@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity
     Date currentDate;
     Date nextDate;
     SimpleDateFormat sdf;
-
+    SharedPreferences sharedPreferences;
     int unlockedTimes = 0;
     PhoneUnlockedReceiver receiver;
 
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity
         if(!hasPermissions(getApplicationContext(), PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
+        sharedPreferences = getSharedPreferences("AppsPreferences", Context.MODE_PRIVATE);
         receiver = new PhoneUnlockedReceiver();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
+        unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
         unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
 
     }
@@ -184,6 +187,7 @@ public class MainActivity extends AppCompatActivity
                 public void run()
                 {
                    loadHomeFragment();
+                    unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
                     unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
                 }
             };
@@ -269,7 +273,10 @@ public class MainActivity extends AppCompatActivity
         nextDate = sdf.parse(sdf.format(new Date()));
         if(currentDate.compareTo(nextDate) != 0) {
             currentDate = new Date();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
             unlockedTimes = 0;
+            editor.putInt("unlockedTimes", unlockedTimes);
+            editor.commit();
         }
     }
     public class PhoneUnlockedReceiver extends BroadcastReceiver {
@@ -282,7 +289,10 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
             if (!intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                unlockedTimes++;
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0) + 1;
+                editor.putInt("unlockedTimes", unlockedTimes);
+                editor.commit();
                 unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
 
             }

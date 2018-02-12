@@ -60,7 +60,7 @@ public class AppsFragment extends Fragment {
         Date today = new Date();
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
-        calendar.add(calendar.getInstance(Locale.US).getFirstDayOfWeek(), -1);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
         long startTime = calendar.getTimeInMillis();
 

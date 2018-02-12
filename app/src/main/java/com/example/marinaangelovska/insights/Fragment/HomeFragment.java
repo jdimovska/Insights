@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
         calendar.setTime(today);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, -1);
 
         long startTime = calendar.getTimeInMillis();
 
@@ -136,7 +136,9 @@ public class HomeFragment extends Fragment {
 
         //Get data
         appList = appService.getApps(usageStatsList);
-        appList = new ArrayList<>(appList.subList(0, 3));
+        if(appList.size() < 3) {
+            appList = new ArrayList<>(appList.subList(0, appList.size()));
+        }
         todaysCallsDuration = contactsService.getTodaysCallsDuration();
         favoritePeopleList = peopleService.getPeople();
         favoritePeopleList = new ArrayList<>(favoritePeopleList.subList(0, 5));
@@ -177,16 +179,22 @@ public class HomeFragment extends Fragment {
 
         DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
-
+        float totalAppsTime = 0;
         for(Application app: appList){
             pieEntries.add(new PieEntry(app.getTime() / 3600f, app.getName()+ ": " + df.format(app.getTime() / 3600f) + "h"));
+            totalAppsTime += app.getTime() / 36000f;
         }
+        float restOfday = 0;
+        if(totalHours > totalHoursSleep)
+            restOfday = (totalHours - totalHoursSleep);
 
-        float restOfday = (totalHours - totalHoursSleep);
-
-        pieEntries.add(new PieEntry(totalHoursSpentOnCalls, "Calls: " + df.format(totalHoursSpentOnCalls) + "h"));
         pieEntries.add(new PieEntry(totalHoursSleep, "Sleep: " + df.format(totalHoursSleep) + "h"));
-        pieEntries.add(new PieEntry( restOfday, "Daily Life: " + df.format(restOfday) + "h"));
+
+        if(totalHoursSpentOnCalls > 0)
+            pieEntries.add(new PieEntry(totalHoursSpentOnCalls, "Calls: " + df.format(totalHoursSpentOnCalls) + "h"));
+
+        if(restOfday > 0)
+            pieEntries.add(new PieEntry( restOfday, "Daily Life: " + df.format(restOfday) + "h"));
 
         PieDataSet dataSet = new PieDataSet(pieEntries, null);
         dataSet.setSelectionShift(5f);
