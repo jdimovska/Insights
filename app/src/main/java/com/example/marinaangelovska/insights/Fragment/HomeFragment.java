@@ -138,6 +138,8 @@ public class HomeFragment extends Fragment {
         appList = appService.getApps(usageStatsList);
         if(appList.size() < 3) {
             appList = new ArrayList<>(appList.subList(0, appList.size()));
+        } else {
+            appList = new ArrayList<>(appList.subList(0, 3));
         }
         todaysCallsDuration = contactsService.getTodaysCallsDuration();
         favoritePeopleList = peopleService.getPeople();
@@ -182,11 +184,15 @@ public class HomeFragment extends Fragment {
         float totalAppsTime = 0;
         for(Application app: appList){
             pieEntries.add(new PieEntry(app.getTime() / 3600f, app.getName()+ ": " + df.format(app.getTime() / 3600f) + "h"));
-            totalAppsTime += app.getTime() / 36000f;
+            totalAppsTime += (app.getTime() / 36000f);
         }
         float restOfday = 0;
-        if(totalHours > totalHoursSleep)
+        if(totalHours > totalHoursSleep) {
             restOfday = (totalHours - totalHoursSleep);
+            if (restOfday > (totalHoursSpentOnCalls + totalAppsTime)) {
+                restOfday = restOfday - (totalHoursSpentOnCalls + totalAppsTime);
+            }
+        }
 
         pieEntries.add(new PieEntry(totalHoursSleep, "Sleep: " + df.format(totalHoursSleep) + "h"));
 
@@ -214,10 +220,10 @@ public class HomeFragment extends Fragment {
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(Color.rgb(81,68,60));
         colors.add(Color.rgb(95, 128, 181));
+        colors.add(Color.rgb(170, 124, 124));
         colors.add(Color.rgb(236,189,174));
         colors.add(Color.rgb(193,131,141));
         colors.add(Color.rgb(182, 200,227));
-        colors.add(Color.rgb(195, 145,178));
 
         dataSet.setColors(colors);
         pieChart.invalidate();

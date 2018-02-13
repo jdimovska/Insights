@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.example.marinaangelovska.insights.Model.Application;
 import com.example.marinaangelovska.insights.R;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -53,7 +55,10 @@ public class CustomAppsAdapter extends ArrayAdapter {
 
     void fillUpTextFields(Application application) {
         appName.setText(application.getName());
-        appTime.setText(application.getTime() + " seconds this week");
+        DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+        float time = application.getTime() / 3600f;
+        appTime.setText(df.format(time)  + " hours this week");
         appIcon.setImageDrawable(application.getIcon());
         appName.setTextColor(Color.rgb(81,68,60));
         appTime.setTextColor(Color.rgb(81,68,60));

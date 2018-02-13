@@ -216,6 +216,7 @@ public class MessagesFragment extends Fragment {
         colors.add(Color.rgb(236,189,174));
         colors.add(Color.rgb(193,131,141));
         colors.add(Color.rgb(182, 200,227));
+        colors.add(Color.rgb(170, 124, 124));
 
         dataSet.setColors(colors);
         pieChart.invalidate();
