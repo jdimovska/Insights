@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity
     public void isNewDay() throws ParseException {
         nextDate = sdf.parse(sdf.format(new Date()));
         if(currentDate.compareTo(nextDate) != 0) {
-            currentDate = new Date();
+            currentDate = nextDate;
             SharedPreferences.Editor editor = sharedPreferences.edit();
             unlockedTimes = 0;
             editor.putInt("unlockedTimes", unlockedTimes);
