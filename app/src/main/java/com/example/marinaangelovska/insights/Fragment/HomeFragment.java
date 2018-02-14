@@ -2,6 +2,7 @@ package com.example.marinaangelovska.insights.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.app.usage.NetworkStatsManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
@@ -27,6 +28,7 @@ import android.widget.ScrollView;
 
 import com.example.marinaangelovska.insights.Adapters.CustomPeopleAdapter;
 import com.example.marinaangelovska.insights.Model.Application;
+import com.example.marinaangelovska.insights.Model.NetworkUsage;
 import com.example.marinaangelovska.insights.Model.Person;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.AppsService;
@@ -66,11 +68,13 @@ public class HomeFragment extends Fragment {
     CustomPeopleAdapter favoritePeopleAdapter;
     ArrayList<Person> favoritePeopleList;
     ArrayList<Application> appList;
+    ArrayList<NetworkUsage> appUsageList;
 
     View view;
 
     Long todaysCallsDuration = 0L;
     PieChart pieChart;
+    PieChart appNetworUsageChart;
 
     public static Button unlockedTimesButton;
 
@@ -118,7 +122,7 @@ public class HomeFragment extends Fragment {
         return queryUsageStats;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -130,7 +134,7 @@ public class HomeFragment extends Fragment {
         usageStatsList = getUsageStatistics();
 
         //Initialize services
-        appService = new AppsService(getActivity());
+        appService = new AppsService(getActivity(), getActivity());
         contactsService = new ContactsService(getActivity());
         peopleService = new PeopleService(getActivity());
 
@@ -144,10 +148,13 @@ public class HomeFragment extends Fragment {
         todaysCallsDuration = contactsService.getTodaysCallsDuration();
         favoritePeopleList = peopleService.getPeople();
         favoritePeopleList = new ArrayList<>(favoritePeopleList.subList(0, 5));
+        appUsageList = appService.getAppsWithNetworkUsage((NetworkStatsManager) getActivity().getSystemService(Context.NETWORK_STATS_SERVICE));
 
         pieChart = (PieChart) view.findViewById(R.id.piechart);
+        appNetworUsageChart = (PieChart) view.findViewById(R.id.piechartNetworkUsage);
 
         setDataForPieChart();
+        setDataForNetworkPieChart();
 
         favoritePeopleAdapter = new CustomPeopleAdapter(getActivity(), favoritePeopleList);
         ListView viewList=(ListView)view.findViewById (R.id.favoritePeople_list);
@@ -167,6 +174,14 @@ public class HomeFragment extends Fragment {
         ScrollView mainScrollView = (ScrollView)view.findViewById(R.id.scrollView_home);
         mainScrollView.smoothScrollTo(0,0);
         return view;
+    }
+
+    private void setDataForNetworkPieChart() {
+        ArrayList<PieEntry> pieEntries = new ArrayList<>();
+        for(NetworkUsage appNU: appUsageList){
+            pieEntries.add(new PieEntry(bytesToMeg(appNU.getDataUsage()), appNU.getAppName() + ": " + humanReadableByteCount(appNU.getDataUsage(), true)));
+        }
+        bindDatasetToChart(pieEntries, appNetworUsageChart);
     }
 
     private void setDataForPieChart() {
@@ -202,6 +217,12 @@ public class HomeFragment extends Fragment {
         if(restOfday > 0)
             pieEntries.add(new PieEntry( restOfday, "Daily Life: " + df.format(restOfday) + "h"));
 
+        bindDatasetToChart(pieEntries, pieChart);
+
+    }
+
+    private void bindDatasetToChart(ArrayList<PieEntry> pieEntries, PieChart pieChart){
+
         PieDataSet dataSet = new PieDataSet(pieEntries, null);
         dataSet.setSelectionShift(5f);
         dataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
@@ -227,7 +248,6 @@ public class HomeFragment extends Fragment {
 
         dataSet.setColors(colors);
         pieChart.invalidate();
-
     }
 
     @Override
@@ -268,6 +288,20 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
         homeDialog.hide();
+    }
+
+    private String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    private static final long  MEGABYTE = 1024L * 1024L;
+
+    public static long bytesToMeg(long bytes) {
+        return bytes / MEGABYTE ;
     }
 
 

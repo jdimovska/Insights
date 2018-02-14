@@ -49,14 +49,36 @@
                 android:text="Your best friends"
                 android:textColor="#51443c" />
 
+
             <ListView
                 android:id="@+id/favoritePeople_list"
                 android:layout_marginLeft="25dp"
                 android:clickable="false"
                 android:layout_marginRight="25dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent" >
+
+            </ListView>
+
+
+            <Button
+                android:id="@+id/networkUsage_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_borders"
+                android:gravity="center"
+                android:clickable="false"
+                android:text="Your apps' network usage"
+                android:textColor="#51443c" />
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/piechartNetworkUsage"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_height="250dp" />
 
         </LinearLayout>
+
 
 </ScrollView>

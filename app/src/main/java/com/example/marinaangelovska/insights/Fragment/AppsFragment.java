@@ -91,7 +91,7 @@ public class AppsFragment extends Fragment {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -100,7 +100,7 @@ public class AppsFragment extends Fragment {
                 .getSystemService(Context.USAGE_STATS_SERVICE);
 
         usageStatsList = getUsageStatistics();
-        appService = new AppsService(getActivity());
+        appService = new AppsService(getContext(), getActivity());
 
         appList = appService.getApps(usageStatsList);
 
