@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
@@ -72,12 +73,6 @@ public class MainActivity extends AppCompatActivity
         setUpDialogViews();
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-        try {
-            currentDate = sdf.parse(sdf.format(new Date()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -270,13 +265,25 @@ public class MainActivity extends AppCompatActivity
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void isNewDay() throws ParseException {
-        nextDate = sdf.parse(sdf.format(new Date()));
-        if(currentDate.compareTo(nextDate) != 0) {
-            currentDate = nextDate;
+        Calendar c = Calendar.getInstance();
+        int thisDay = c.get(Calendar.DAY_OF_YEAR);
+        long todayMillis = c.getTimeInMillis();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        long last = prefs.getLong("date", System.currentTimeMillis());
+        c.setTimeInMillis(last);
+        int lastDay = c.get(Calendar.DAY_OF_YEAR);
+
+        if (lastDay == thisDay) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             unlockedTimes = 0;
             editor.putInt("unlockedTimes", unlockedTimes);
             editor.commit();
+
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putLong("date", todayMillis + 86400000);
+            edit.commit();
+
         }
     }
     public class PhoneUnlockedReceiver extends BroadcastReceiver {
