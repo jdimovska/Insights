@@ -5,19 +5,18 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
-import android.provider.CallLog;
 import android.provider.Telephony;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 
+import com.example.marinaangelovska.insights.Comparators.FrequencyComparatorMessage;
+import com.example.marinaangelovska.insights.Comparators.SizeComparator;
 import com.example.marinaangelovska.insights.Model.Message;
-import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +33,7 @@ public class MessagesService {
     }
 
     public List<NodeMessage> getMostFrequentMessages(List<NodeMessage> callList) {
-        Collections.sort(callList, new FrequencyComparator());
+        Collections.sort(callList, new FrequencyComparatorMessage());
         return callList;
     }
 
@@ -122,22 +121,6 @@ public class MessagesService {
             }
         }
         return informationForContact;
-    }
-
-    class FrequencyComparator implements Comparator<NodeMessage> {
-        @Override
-        public int compare(NodeMessage callNodeOne, NodeMessage callNodeTwo) {
-            return callNodeOne.getFrequency() < callNodeTwo.getFrequency() ? 1 : callNodeOne.getFrequency() == callNodeTwo.getFrequency() ? 0 : -1;
-
-        }
-    }
-
-    class SizeComparator implements Comparator<NodeMessage> {
-        @Override
-        public int compare(NodeMessage callNodeOne, NodeMessage callNodeTwo) {
-            return callNodeOne.getSize() < callNodeTwo.getSize() ? 1 : callNodeOne.getSize() == callNodeTwo.getSize() ? 0 : -1;
-
-        }
     }
 
     private  ArrayList<Integer> getMessageTypes() {

@@ -255,14 +255,6 @@ public class HomeFragment extends Fragment {
         super.onAttach(context);
     }
 
-    class UsageTimeComparator implements Comparator<UsageStats>{
-
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public int compare(UsageStats usageStats, UsageStats t1) {
-            return Long.compare(usageStats.getTotalTimeInForeground(), t1.getTotalTimeInForeground());
-        }
-    }
 
     private static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();

@@ -6,6 +6,7 @@ import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.example.marinaangelovska.insights.Comparators.FactorComparator;
 import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 import com.example.marinaangelovska.insights.Model.Person;
@@ -72,18 +73,5 @@ public class PeopleService {
             }
         }
         return uniqueList;
-    }
-    class NameComparator implements Comparator<Person> {
-        @Override
-        public int compare(Person person1, Person person2) {
-            return (person1.getName()).compareTo(person2.getName());
-        }
-    }
-
-    class FactorComparator implements Comparator<Person> {
-        @Override
-        public int compare(Person person1, Person person2) {
-            return person1.getFactor() < person2.getFactor() ? 1 : person1.getFactor() == person2.getFactor() ? 0 : -1;
-        }
     }
 }

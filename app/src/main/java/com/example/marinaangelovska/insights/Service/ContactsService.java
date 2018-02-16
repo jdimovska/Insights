@@ -7,13 +7,14 @@ import android.database.Cursor;
 import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 
+import com.example.marinaangelovska.insights.Comparators.DurationComparator;
+import com.example.marinaangelovska.insights.Comparators.FrequencyComparator;
 import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.NodeContact;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -124,20 +125,6 @@ public class ContactsService {
             }
         }
         return totalDuration;
-    }
-
-    class FrequencyComparator implements Comparator<NodeContact> {
-        @Override
-        public int compare(NodeContact callNodeContactOne, NodeContact callNodeContactTwo) {
-            return callNodeContactOne.getOccurrence() < callNodeContactTwo.getOccurrence() ? 1 : callNodeContactOne.getOccurrence() == callNodeContactTwo.getOccurrence() ? 0 : -1;
-        }
-    }
-
-    class DurationComparator implements Comparator<NodeContact> {
-        @Override
-        public int compare(NodeContact callNodeContactOne, NodeContact callNodeContactTwo) {
-            return callNodeContactOne.getDuration() < callNodeContactTwo.getDuration() ? 1 : callNodeContactOne.getDuration() == callNodeContactTwo.getDuration() ? 0 : -1;
-        }
     }
 
     public HashMap<Integer, NodeContact> getInformationForContact(String number) {

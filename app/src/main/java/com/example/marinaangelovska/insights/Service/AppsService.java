@@ -18,6 +18,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 
+import com.example.marinaangelovska.insights.Comparators.NetworkUsageComparator;
+import com.example.marinaangelovska.insights.Comparators.TimeComparator;
 import com.example.marinaangelovska.insights.Model.Application;
 import com.example.marinaangelovska.insights.Model.NetworkUsage;
 import com.example.marinaangelovska.insights.R;
@@ -170,23 +172,5 @@ public class AppsService {
             }
         }
         return "";
-    }
-
-    class TimeComparator implements Comparator<Application> {
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-        @Override
-        public int compare(Application app1, Application app2) {
-            return app1.getTime().compareTo(app2.getTime());
-
-        }
-    }
-
-    class NetworkUsageComparator implements Comparator<NetworkUsage> {
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-        @Override
-        public int compare(NetworkUsage n1, NetworkUsage n2) {
-            return n1.getDataUsage().compareTo(n2.getDataUsage());
-
-        }
     }
 }
