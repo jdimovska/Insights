@@ -1,9 +1,12 @@
 package com.example.marinaangelovska.insights.Service;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.example.marinaangelovska.insights.Comparators.FactorComparator;
@@ -40,38 +43,45 @@ public class PeopleService {
         list = map.get(1);
 
         ArrayList<Person> peopleList = new ArrayList<>();
-        Cursor managedCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
-        int display_name = managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int number = managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+            Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
 
-        while (managedCursor.moveToNext()) {
-            String phDisplayName = managedCursor.getString(display_name);
-            String phNumber = managedCursor.getString(number);
-            phNumber = phNumber.replaceAll("\\s+","");
-            int factor = 0;
-            for (int i=0;i < list.size(); i++) {
-                if(list.get(i).getNumber().equals(phNumber)) {
-                 factor = list.get(i).getOccurrence();
-                 break;
+            int display_name = managedCursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+            int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
+
+            while (managedCursor.moveToNext()) {
+                String phDisplayName = managedCursor.getString(display_name);
+                String phNumber = managedCursor.getString(number);
+                phNumber = phNumber.replaceAll("\\s+", "");
+                int factor = 0;
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getNumber().contains(phNumber)) {
+                        factor = list.get(i).getOccurrence();
+                        break;
+                    }
+                }
+                if(phDisplayName == null){
+                    phDisplayName = phNumber;
+                }
+                Person person = new Person(phDisplayName, phNumber, factor);
+                if (!peopleList.contains(person))
+                    peopleList.add(person);
+
+            }
+
+            Collections.sort(peopleList, new FactorComparator());
+            ArrayList<Person> uniqueList = new ArrayList<>();
+            int counter = 0;
+            if (!peopleList.isEmpty())
+                uniqueList.add(peopleList.get(0));
+            for (int i = 1; i < peopleList.size(); i++) {
+                if (!uniqueList.get(counter).getName().equals(peopleList.get(i).getName())) {
+                    uniqueList.add(peopleList.get(i));
+                    counter++;
                 }
             }
-            Person person = new Person(phDisplayName, phNumber, factor);
-            if (!peopleList.contains(person))
-                peopleList.add(person);
-
+            return uniqueList;
         }
-
-        Collections.sort(peopleList, new FactorComparator());
-        ArrayList<Person> uniqueList = new ArrayList<>();
-        int counter = 0;
-        if(!peopleList.isEmpty())
-            uniqueList.add(peopleList.get(0));
-        for(int i = 1; i < peopleList.size(); i++) {
-            if(!uniqueList.get(counter).getName().equals(peopleList.get(i).getName())) {
-                uniqueList.add(peopleList.get(i));
-                counter++;
-            }
-        }
-        return uniqueList;
+        return new ArrayList<>();
     }
 }
