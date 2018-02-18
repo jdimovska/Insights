@@ -1,22 +1,24 @@
 package com.example.marinaangelovska.insights.Fragment;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.marinaangelovska.insights.Model.Application;
 import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 import com.example.marinaangelovska.insights.R;
@@ -95,6 +97,23 @@ public class PeopleDetailsFragment extends Fragment {
         outgoingFrequencyMessages = (TextView) view.findViewById(R.id.outgoingFrequencyMessages);
 
         missedFrequency = (TextView) view.findViewById(R.id.missedFrequency);
+
+        personNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE);
+
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(
+                            getActivity(),
+                            new String[]{Manifest.permission.CALL_PHONE},
+                            123);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + personNumber.getText()));
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     void fillUpTextFields(HashMap<Integer, NodeContact> contactInformationContacts, HashMap<Integer, NodeMessage> contactInformationMessages) {
