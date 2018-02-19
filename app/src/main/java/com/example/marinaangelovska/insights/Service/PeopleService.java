@@ -53,9 +53,6 @@ public class PeopleService {
         while (managedCursor.moveToNext()) {
             String phDisplayName = managedCursor.getString(display_name);
             String phNumber = managedCursor.getString(number);
-            if(phDisplayName.equals("Jona Dimovska")) {
-               Log.i("string", "JONA");
-            }
             phNumber = NormalizeNumber.normalizeNumber(phNumber);
             int factor = 0;
             for (int i=0;i < list.size(); i++) {

@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
+
 /**
  * Created by Jona Dimovska on 28.1.2018.
  */
@@ -252,5 +254,16 @@ public class MessagesFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        dialog.hide();
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        dialog.hide();
     }
 }

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
 
 /**
  * Created by Jona Dimovska on 31.1.2018.
@@ -126,9 +127,14 @@ public class PeopleFragment extends Fragment {
         super.onResume();
         search.setText("");
         search.setTextColor(Color.rgb(81,68,60));
+        dialog.hide();
 
     }
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        dialog.hide();
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

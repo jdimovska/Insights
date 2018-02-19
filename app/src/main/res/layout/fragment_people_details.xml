@@ -38,6 +38,7 @@
             android:text="TextView" />
 
     </LinearLayout>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -54,7 +55,7 @@
             android:id="@+id/personNumber"
             android:layout_width="match_parent"
             android:layout_weight="0.5"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:padding="5pt"
             android:background="@drawable/line"
             android:drawableRight="@drawable/ic_call_black_20dp"

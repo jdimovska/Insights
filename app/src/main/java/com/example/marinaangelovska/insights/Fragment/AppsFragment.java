@@ -24,6 +24,8 @@ import com.example.marinaangelovska.insights.Adapters.CustomAppsAdapter;
 import com.example.marinaangelovska.insights.Model.Application;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.AppsService;
+import com.example.marinaangelovska.insights.Service.ContactsService;
+import com.example.marinaangelovska.insights.Service.PeopleService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.example.marinaangelovska.insights.Activity.MainActivity.appDialog;
+import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
 
 
 /**
@@ -47,6 +49,7 @@ public class AppsFragment extends Fragment {
     AppsService appService;
     ArrayList<Application> appList;
     View view;
+    ListView viewList;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -54,20 +57,15 @@ public class AppsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     List<UsageStats> getUsageStatistics() {
         Date today = new Date();
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-
         long startTime = calendar.getTimeInMillis();
-
         List<UsageStats> queryUsageStats = new ArrayList<>();
-
-        Map<String, UsageStats> queryUsageStats1 = mUsageStatsManager
-                .queryAndAggregateUsageStats(startTime,
+        Map<String, UsageStats> queryUsageStats1 = mUsageStatsManager.queryAndAggregateUsageStats(startTime,
                         endTime);
 
         if (queryUsageStats1.size() == 0) {
@@ -79,48 +77,50 @@ public class AppsFragment extends Fragment {
             Map.Entry pair = (Map.Entry)it.next();
             queryUsageStats.add((UsageStats) pair.getValue());
         }
-
         for(int i = 0; i < queryUsageStats.size(); i++){
             UsageStats tmp = queryUsageStats.get(i);
             if(tmp.getTotalTimeInForeground() <= 0){
                 queryUsageStats.remove(i);
             }
         }
-
         return queryUsageStats;
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_app, container, false);
+        viewList=(ListView)view.findViewById (R.id.appsList);
         mUsageStatsManager = (UsageStatsManager) getActivity()
                 .getSystemService(Context.USAGE_STATS_SERVICE);
-
         usageStatsList = getUsageStatistics();
-        appService = new AppsService(getContext(), getActivity());
-
+        appService = new AppsService(getActivity(), getActivity());
         appList = appService.getApps(usageStatsList);
-
         adapter=new CustomAppsAdapter(getActivity(), appList);
-        ListView viewList=(ListView)view.findViewById (R.id.appsList);
         viewList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
         return view;
     }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void loadApplications() {
 
+
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
-
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onResume() {
+        super.onResume();
+        dialog.hide();
+    }
     @Override
     public void onStart() {
         super.onStart();
-        appDialog.hide();
+        dialog.hide();
     }
 }

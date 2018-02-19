@@ -1,6 +1,7 @@
 package com.example.marinaangelovska.insights.Activity;
 
 import android.Manifest;
+import android.app.AppOpsManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
@@ -27,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.marinaangelovska.insights.Fragment.AboutFragment;
 import com.example.marinaangelovska.insights.Fragment.AppsFragment;
 import com.example.marinaangelovska.insights.Fragment.ContactsFragment;
 import com.example.marinaangelovska.insights.Fragment.HomeFragment;
@@ -53,8 +56,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int PERMISSIONS_REQUEST_READ_CALL_LOG = 100;
     private static final int PERMISSIONS_REQUEST_READ_SMS_LOG = 200;
-    public static ProgressDialog appDialog;
-    public static ProgressDialog homeDialog;
+    public static ProgressDialog dialog;
     final Handler finalHandler = new Handler();
     Calendar cal = Calendar.getInstance();
     Date currentDate;
@@ -64,13 +66,14 @@ public class MainActivity extends AppCompatActivity
     int unlockedTimes = 0;
     PhoneUnlockedReceiver receiver;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setUpDialogViews();
+        dialog = new ProgressDialog(MainActivity.this);
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -83,37 +86,70 @@ public class MainActivity extends AppCompatActivity
         int PERMISSION_ALL = 1;
         String[] PERMISSIONS = {Manifest.permission.READ_CALL_LOG,
                 Manifest.permission.READ_SMS,
-                Manifest.permission.READ_CONTACTS};
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.READ_PHONE_STATE};
 
         if(!hasPermissions(getApplicationContext(), PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
+
+
         sharedPreferences = getSharedPreferences("AppsPreferences", Context.MODE_PRIVATE);
         receiver = new PhoneUnlockedReceiver();
+
+        checkPermissions();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        loadHomeFragment();
+        unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
+        setUpScreen();
 
     }
-    private void setUpDialogViews() {
-        appDialog = new ProgressDialog(MainActivity.this);
-        appDialog.setMessage("Applications loading...");
-        appDialog.setCancelable(false);
-        appDialog.setInverseBackgroundForced(false);
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void setUpScreen() {
+        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+        int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), getPackageName());
+        if (mode == AppOpsManager.MODE_ALLOWED) {
+            setUpDialogViews("Home screen loading...");
+            dialog.show();
+            final Runnable changeView = new Runnable()
+            {
+                public void run()
+                {
+                    loadHomeFragment();
+                    unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
+                    unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
+                }
+            };
+            finalHandler.postDelayed(changeView, 400);
 
-        homeDialog = new ProgressDialog(MainActivity.this);
-        homeDialog.setMessage("Home screen loading...");
-        homeDialog.setCancelable(false);
-        homeDialog.setInverseBackgroundForced(false);
+        } else
+            loadAboutFragment();
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void checkPermissions() {
+        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+        int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), getPackageName());
+        if (mode != AppOpsManager.MODE_ALLOWED) {
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            startActivity(intent);
+        }
+
+    }
+    private void setUpDialogViews(String message) {
+        dialog.setMessage(message);
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+
     }
 
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
-        unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
+
 
     }
 
@@ -163,11 +199,20 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
 
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(receiver, filter);
 
+    }
+    private void loadAboutFragment() {
+        AboutFragment aboutFragment = new AboutFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, aboutFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -176,7 +221,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if(id == R.id.nav_home) {
-            homeDialog.show();
+            setUpDialogViews("Home screen loading...");
+            dialog.show();
             final Runnable changeView = new Runnable()
             {
                 public void run()
@@ -187,36 +233,67 @@ public class MainActivity extends AppCompatActivity
                 }
             };
 
-            finalHandler.postDelayed(changeView, 500);
+            finalHandler.postDelayed(changeView, 400);
 
         } else if (id == R.id.nav_contacts) {
-            ContactsFragment contactsFragment = new ContactsFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, contactsFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            setUpDialogViews("Contacts loading...");
+            dialog.show();
+            final Runnable changeView = new Runnable()
+            {
+                public void run()
+                {
+                    ContactsFragment contactsFragment = new ContactsFragment();
+                    android.app.FragmentManager fragmentManager = getFragmentManager();
+                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.root_layout, contactsFragment);
+                    fragmentTransaction.commit();
+                    fragmentManager.executePendingTransactions();
+
+                }
+            };
+
+            finalHandler.postDelayed(changeView, 300);
 
         } else if (id == R.id.nav_messages) {
-            MessagesFragment messagesFragment = new MessagesFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, messagesFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            setUpDialogViews("Messages loading...");
+            dialog.show();
 
-        } else if(id == R.id.nav_people) {
+            final Runnable changeView = new Runnable()
+            {
+                public void run()
+                {
+                    MessagesFragment messagesFragment = new MessagesFragment();
+                    android.app.FragmentManager fragmentManager = getFragmentManager();
+                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.root_layout, messagesFragment);
+                    fragmentTransaction.commit();
+                    fragmentManager.executePendingTransactions();
 
-            PeopleFragment peopleFragment = new PeopleFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, peopleFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+                }
+            };
+            finalHandler.postDelayed(changeView, 300);
 
+         } else if(id == R.id.nav_people) {
+            setUpDialogViews("People loading...");
+            dialog.show();
+            final Runnable changeView = new Runnable()
+            {
+                public void run()
+                {
+                    PeopleFragment peopleFragment = new PeopleFragment();
+                    android.app.FragmentManager fragmentManager = getFragmentManager();
+                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.root_layout, peopleFragment);
+                    fragmentTransaction.commit();
+                    fragmentManager.executePendingTransactions();
+
+                }
+            };
+            finalHandler.postDelayed(changeView, 300);
         } else if(id == R.id.nav_apps) {
 
-            appDialog.show();
+            setUpDialogViews("Applications loading...");
+            dialog.show();
             final Runnable changeView = new Runnable()
             {
                 public void run()
@@ -239,6 +316,9 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.root_layout, networkFragment);
             fragmentTransaction.commit();
             fragmentManager.executePendingTransactions();
+
+        } else if(id == R.id.nav_about) {
+            loadAboutFragment();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

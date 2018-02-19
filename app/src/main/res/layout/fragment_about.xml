@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2eae3"
+    android:fillViewport="true">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2eae3"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/about_header"
+        android:textColor="#f2eae3"
+        android:padding="15sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:text="Insights app can help you keep track on the time you spend on your mobile phone!"
+        android:background="#c1838d"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_width="200sp"
+        android:layout_height="180sp"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:src="@mipmap/ic_launcher_foreground"/>
+
+
+    <TextView
+        android:id="@+id/about_text_view"
+        android:textColor="#51443c"
+        android:textSize="17sp"
+        android:textAlignment="gravity"
+        android:paddingLeft = "10sp"
+        android:paddingRight="10sp"
+        android:text="Insights info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+</ScrollView>

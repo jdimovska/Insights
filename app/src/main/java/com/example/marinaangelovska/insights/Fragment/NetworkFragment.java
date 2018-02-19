@@ -80,7 +80,7 @@ public class NetworkFragment extends Fragment {
         data.setDrawValues(false);
         dataUsageChart.setData(data);
         dataUsageChart.setEntryLabelColor(Color.WHITE);
-        dataUsageChart.setEntryLabelTextSize(10f);
+        dataUsageChart.setEntryLabelTextSize(12f);
 
         dataUsageChart.highlightValues(null);
         dataUsageChart.setDescription( null);

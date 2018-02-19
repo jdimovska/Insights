@@ -29,6 +29,11 @@
             android:id="@+id/nav_network"
             android:icon="@drawable/ic_network_check_black_24dp"
             android:title="Network" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_icons8_about"
+            android:title="About" />
     </group>
 
 </menu>

@@ -23,9 +23,9 @@
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/piechart"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="45dp"
-                android:layout_marginRight="45dp"
-                android:layout_height="250dp" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_height="350dp" />
 
             <Button
                 android:id="@+id/unlockedTimes_button"
@@ -39,6 +39,10 @@
                 android:textColor="#51443c"
                 android:layout_marginBottom="15dp"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
             <Button
                 android:id="@+id/bestFriends_button"
                 android:layout_width="match_parent"
@@ -49,34 +53,19 @@
                 android:text="Your best friends"
                 android:textColor="#51443c" />
 
-
             <ListView
                 android:id="@+id/favoritePeople_list"
-                android:layout_marginLeft="25dp"
                 android:clickable="false"
-                android:layout_marginRight="25dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_width="fill_parent"
+                android:layout_gravity="top"
+                android:layout_marginLeft="20sp"
+                android:layout_marginRight="20sp"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true">
 
             </ListView>
 
-
-            <Button
-                android:id="@+id/networkUsage_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_borders"
-                android:gravity="center"
-                android:clickable="false"
-                android:text="Your apps' monthly WIFI usage"
-                android:textColor="#51443c" />
-
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/piechartNetworkUsage"
-                android:layout_width="match_parent"
-                android:layout_marginLeft="45dp"
-                android:layout_marginRight="45dp"
-                android:layout_height="250dp" />
+            </LinearLayout>
 
         </LinearLayout>
 

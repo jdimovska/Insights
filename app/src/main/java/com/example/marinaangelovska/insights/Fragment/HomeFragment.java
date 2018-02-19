@@ -50,7 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.marinaangelovska.insights.Activity.MainActivity.homeDialog;
+import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
 
 /**
  * Created by marinaangelovska on 2/2/18.
@@ -58,6 +58,7 @@ import static com.example.marinaangelovska.insights.Activity.MainActivity.homeDi
 
 public class HomeFragment extends Fragment {
 
+    public static final String ACTION_USAGE_ACCESS_SETTINGS = Settings.ACTION_USAGE_ACCESS_SETTINGS;
     UsageStatsManager mUsageStatsManager;
     List<UsageStats> usageStatsList;
 
@@ -74,7 +75,6 @@ public class HomeFragment extends Fragment {
 
     Long todaysCallsDuration = 0L;
     PieChart pieChart;
-    PieChart appNetworUsageChart;
 
     public static Button unlockedTimesButton;
 
@@ -83,7 +83,6 @@ public class HomeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         unlockedTimesButton = (Button) getView().findViewById(R.id.unlockedTimes_button);
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -103,7 +102,7 @@ public class HomeFragment extends Fragment {
                         endTime);
 
         if (queryUsageStats1.size() == 0) {
-            startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+            startActivity(new Intent(ACTION_USAGE_ACCESS_SETTINGS));
         }
 
         Iterator it = queryUsageStats1.entrySet().iterator();
@@ -151,10 +150,8 @@ public class HomeFragment extends Fragment {
         appUsageList = appService.getAppsWithNetworkUsage((NetworkStatsManager) getActivity().getSystemService(Context.NETWORK_STATS_SERVICE));
 
         pieChart = (PieChart) view.findViewById(R.id.piechart);
-        appNetworUsageChart = (PieChart) view.findViewById(R.id.piechartNetworkUsage);
 
         setDataForPieChart();
-        setDataForNetworkPieChart();
 
         favoritePeopleAdapter = new CustomPeopleAdapter(getActivity(), favoritePeopleList);
         ListView viewList=(ListView)view.findViewById (R.id.favoritePeople_list);
@@ -176,13 +173,6 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void setDataForNetworkPieChart() {
-        ArrayList<PieEntry> pieEntries = new ArrayList<>();
-        for(NetworkUsage appNU: appUsageList){
-            pieEntries.add(new PieEntry(bytesToMeg(appNU.getDataUsage()), appNU.getAppName() + ": " + humanReadableByteCount(appNU.getDataUsage(), true)));
-        }
-        bindDatasetToChart(pieEntries, appNetworUsageChart);
-    }
 
     private void setDataForPieChart() {
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
@@ -232,7 +222,7 @@ public class HomeFragment extends Fragment {
         data.setDrawValues(false);
         pieChart.setData(data);
         pieChart.setEntryLabelColor(Color.WHITE);
-        pieChart.setEntryLabelTextSize(10f);
+        pieChart.setEntryLabelTextSize(12f);
 
         pieChart.highlightValues(null);
         pieChart.setDescription( null);
@@ -279,22 +269,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        homeDialog.hide();
-    }
-
-    private String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        dialog.hide();
     }
 
     private static final long  MEGABYTE = 1024L * 1024L;
 
-    public static long bytesToMeg(long bytes) {
-        return bytes / MEGABYTE ;
-    }
 
 
 }
