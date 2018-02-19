@@ -11,6 +11,13 @@ import java.util.Comparator;
 public class FactorComparator implements Comparator<Person> {
     @Override
     public int compare(Person person1, Person person2) {
-        return person1.getFactor() < person2.getFactor() ? 1 : person1.getFactor() == person2.getFactor() ? 0 : -1;
+        if(person1.getFactor() < person2.getFactor())
+            return 1;
+        else if(person1.getFactor() > person2.getFactor())
+            return -1;
+        else if(person1.getName().compareTo(person2.getName()) > 0)
+            return 1;
+        else return -1;
+
     }
 }

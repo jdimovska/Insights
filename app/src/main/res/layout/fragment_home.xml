@@ -68,7 +68,7 @@
                 android:background="@drawable/button_borders"
                 android:gravity="center"
                 android:clickable="false"
-                android:text="Your apps' network usage"
+                android:text="Your apps' monthly WIFI usage"
                 android:textColor="#51443c" />
 
             <com.github.mikephil.charting.charts.PieChart

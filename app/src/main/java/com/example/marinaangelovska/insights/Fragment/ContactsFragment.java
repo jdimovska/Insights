@@ -1,7 +1,9 @@
 package com.example.marinaangelovska.insights.Fragment;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.Nullable;
@@ -18,6 +20,9 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,10 +61,13 @@ public class ContactsFragment extends Fragment {
 
     HashMap<Integer, List<NodeContact>> map;
 
+    DecimalFormat df = new DecimalFormat("#.#");
+
     public List<NodeContact> creatNewInstance(List<NodeContact> temp) {
         return new ArrayList<NodeContact>(temp);
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -68,6 +76,7 @@ public class ContactsFragment extends Fragment {
         peopleService.getPeople();
 
         map = contactsService.getCallLogDetails();
+        df.setRoundingMode(RoundingMode.CEILING);
 
         int callTypeIncoming = CallLog.Calls.INCOMING_TYPE;
         int callTypeOutgoing = CallLog.Calls.OUTGOING_TYPE;
@@ -154,18 +163,18 @@ public class ContactsFragment extends Fragment {
         if(!callList.isEmpty()) {
             if(callList.size() < 4 ) {
                 for (int i = 0; i < callList.size()   ; i++){
-                    int minutes = callList.get(i).getDuration() / 60;
+                    float minutes = callList.get(i).getDuration() / 60f;
                     PieEntry newPEntry = new PieEntry(callList.get(i).getDuration(),
-                            callList.get(i).getName() + ": " + minutes + " min");
+                            callList.get(i).getName() + ": " + df.format(minutes) + " min");
                     pieEntryList.add(newPEntry);
                 }
             } else {
                 int counter = 0;
                 double total = 0;
                 while (total / totalAll < 0.85) {
-                    int minutes = callList.get(counter).getDuration() / 60;
+                    float minutes = callList.get(counter).getDuration() / 60f;
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getDuration(),
-                            callList.get(counter).getName() + ": " + minutes + " min");
+                            callList.get(counter).getName() + ": " + df.format(minutes) + " min");
                     pieEntryList.add(newPEntry);
                     total += callList.get(counter).getDuration();
                     counter++;
@@ -173,7 +182,7 @@ public class ContactsFragment extends Fragment {
                 for (int i = counter; i <callList.size() ; i++){
                     totalOthers += callList.get(i).getDuration();
                 }
-                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + totalOthers/60 + " min");
+                PieEntry newPEntry = new PieEntry(totalOthers, "Others: " + df.format(totalOthers/60f) + " min");
                 pieEntryList.add(newPEntry);
             }
 

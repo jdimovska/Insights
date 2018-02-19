@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.provider.CallLog;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 
 import com.example.marinaangelovska.insights.Comparators.DurationComparator;
@@ -19,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 
 /**
  * Created by Jona Dimovska on 28.1.2018.
@@ -51,6 +54,7 @@ public class ContactsService {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public  HashMap<Integer, List<NodeContact>> getCallLogDetails() {
 
         List<Integer> callTypes = this.getCallTypes();
@@ -69,6 +73,7 @@ public class ContactsService {
 
                 while (managedCursor.moveToNext()) {
                     String phNumber = managedCursor.getString(number);
+                    phNumber = NormalizeNumber.normalizeNumber(phNumber);
                     String callType = managedCursor.getString(type);
                     String phName = managedCursor.getString(name);
                     Date callDayTime = new Date(Long.valueOf(managedCursor.getString(date)));
@@ -127,6 +132,7 @@ public class ContactsService {
         return totalDuration;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public HashMap<Integer, NodeContact> getInformationForContact(String number) {
 
         HashMap<Integer, NodeContact> informationForContact = new HashMap<>();

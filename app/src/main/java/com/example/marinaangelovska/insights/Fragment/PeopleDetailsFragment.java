@@ -1,6 +1,7 @@
 package com.example.marinaangelovska.insights.Fragment;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,8 @@ import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.ContactsService;
 import com.example.marinaangelovska.insights.Service.MessagesService;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -55,11 +58,14 @@ public class PeopleDetailsFragment extends Fragment {
     String name;
     String number;
 
+    DecimalFormat df = new DecimalFormat("#.#");
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Nullable
     @Override
@@ -71,10 +77,13 @@ public class PeopleDetailsFragment extends Fragment {
         name = getArguments().getString("name");
         number = getArguments().getString("number");
 
+        df.setRoundingMode(RoundingMode.CEILING);
+
         HashMap<Integer, NodeContact> contactInformationContacts = contactsService.getInformationForContact(number);
         HashMap<Integer, NodeMessage> contactInformationMessages = messagesService.getInformationForContact(number);
         setUpTextFields(view);
         fillUpTextFields(contactInformationContacts, contactInformationMessages);
+
         return view;
     }
 
@@ -125,8 +134,11 @@ public class PeopleDetailsFragment extends Fragment {
             switch (callTypes.get(i)) {
                 case 1:
                     if(contactInformationContacts.containsKey(callTypes.get(i))) {
-                        incomingFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getOccurrence()));
-                        incomingDuration.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getDuration()));
+                        String s = "s";
+                        if(contactInformationContacts.get(callTypes.get(i)).getOccurrence() == 1)
+                            s = "" ;
+                        incomingFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getOccurrence()) + " time" + s);
+                        incomingDuration.setText(String.valueOf(df.format(contactInformationContacts.get(callTypes.get(i)).getDuration() / 60f)) + " min");
                     } else {
                         incomingFrequency.setText(String.valueOf(0));
                         incomingDuration.setText(String.valueOf(0));
@@ -134,8 +146,11 @@ public class PeopleDetailsFragment extends Fragment {
                     break;
                 case 2:
                     if(contactInformationContacts.containsKey(callTypes.get(i))) {
-                        outgoingFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getOccurrence()));
-                        outgoingDuration.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getDuration()));
+                        String s = "s";
+                        if(contactInformationContacts.get(callTypes.get(i)).getOccurrence() == 1)
+                            s = "" ;
+                        outgoingFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getOccurrence()) + " time" + s);
+                        outgoingDuration.setText(String.valueOf(df.format(contactInformationContacts.get(callTypes.get(i)).getDuration() / 60f)) + " min");
                     } else {
                         outgoingFrequency.setText(String.valueOf(0));
                         outgoingDuration.setText(String.valueOf(0));
@@ -143,7 +158,10 @@ public class PeopleDetailsFragment extends Fragment {
                     break;
                 case 3:
                     if(contactInformationContacts.containsKey(callTypes.get(i))) {
-                        missedFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getOccurrence()));
+                        String s = "s";
+                        if(contactInformationContacts.get(callTypes.get(i)).getOccurrence() == 1)
+                            s = "" ;
+                        missedFrequency.setText(String.valueOf(contactInformationContacts.get(callTypes.get(i)).getOccurrence()) + " time" + s);
                     } else {
                         missedFrequency.setText(String.valueOf(0));
 
@@ -157,14 +175,20 @@ public class PeopleDetailsFragment extends Fragment {
             switch (messageTypes.get(i)) {
                 case 1:
                     if(contactInformationMessages.containsKey(messageTypes.get(i))) {
-                        incomingFrequencyMessages.setText(String.valueOf(contactInformationMessages.get(messageTypes.get(i)).getFrequency()));
+                        String s = "s";
+                        if(contactInformationMessages.get(messageTypes.get(i)).getFrequency() == 1)
+                            s = "" ;
+                        incomingFrequencyMessages.setText(String.valueOf(contactInformationMessages.get(messageTypes.get(i)).getFrequency()) + " time" + s);
                     } else {
                         incomingFrequencyMessages.setText(String.valueOf(0));
                     }
                     break;
                 case 2:
                     if(contactInformationMessages.containsKey(messageTypes.get(i))) {
-                        outgoingFrequencyMessages.setText(String.valueOf(contactInformationMessages.get(messageTypes.get(i)).getFrequency()));
+                        String s = "s";
+                        if(contactInformationMessages.get(messageTypes.get(i)).getFrequency() == 1)
+                            s = "" ;
+                        outgoingFrequencyMessages.setText(String.valueOf(contactInformationMessages.get(messageTypes.get(i)).getFrequency()) + " time" + s);
                     } else {
                         outgoingFrequencyMessages.setText(String.valueOf(0));
 

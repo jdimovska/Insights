@@ -1,9 +1,11 @@
 package com.example.marinaangelovska.insights.Service;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.icu.util.ULocale;
 import android.os.Build;
 import android.provider.Telephony;
 import android.support.annotation.RequiresApi;
@@ -42,6 +44,7 @@ public class MessagesService {
         return callList;
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public  HashMap<Integer, List<NodeMessage>> getMessageLogDetails() {
         List<Integer> messageTypes = this.getMessageTypes();
@@ -61,6 +64,7 @@ public class MessagesService {
                 while (managedCursor.moveToNext()) {
 
                     String phPhone = managedCursor.getString(phone);
+                    phPhone = NormalizeNumber.normalizeNumber(phPhone);
                     String phBody = managedCursor.getString(body);
                     String phDate = managedCursor.getString(date);
                     Date formatedDate = new Date(Long.valueOf(managedCursor.getString(date)));
@@ -109,12 +113,8 @@ public class MessagesService {
             contactInfoForType = helperMap.get(callTypes.get(i));
             for(int j = 0; j < contactInfoForType.size(); j++){
                 String numberContact;
-                if(contactInfoForType.get(j).getNumber().length() >= 12 ) {
-                     numberContact = contactInfoForType.get(j).getNumber().substring(4,12);
-                } else {
-                     numberContact = contactInfoForType.get(j).getNumber();
-                }
-                if(number.substring(1).equals(numberContact) ) {
+                numberContact = contactInfoForType.get(j).getNumber();
+                if(number.equals(numberContact) ) {
                     informationForContact.put(callTypes.get(i), new NodeMessage(contactInfoForType.get(j).getNumber(),  contactInfoForType.get(j).getSize(), contactInfoForType.get(j).getFrequency()));
                     break;
                 }
