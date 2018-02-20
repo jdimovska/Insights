@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment {
     PeopleService peopleService;
 
     CustomPeopleAdapter favoritePeopleAdapter;
+    public static ArrayList<Person> allPeopleList;
     ArrayList<Person> favoritePeopleList;
     ArrayList<Application> appList;
     ArrayList<NetworkUsage> appUsageList;
@@ -146,6 +147,7 @@ public class HomeFragment extends Fragment {
         }
         todaysCallsDuration = contactsService.getTodaysCallsDuration();
         favoritePeopleList = peopleService.getPeople();
+        allPeopleList = new ArrayList<Person>(favoritePeopleList);
         favoritePeopleList = new ArrayList<>(favoritePeopleList.subList(0, 5));
         appUsageList = appService.getAppsWithNetworkUsage((NetworkStatsManager) getActivity().getSystemService(Context.NETWORK_STATS_SERVICE));
 
@@ -271,9 +273,5 @@ public class HomeFragment extends Fragment {
         super.onStart();
         dialog.hide();
     }
-
-    private static final long  MEGABYTE = 1024L * 1024L;
-
-
 
 }

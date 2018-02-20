@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
+import static com.example.marinaangelovska.insights.Fragment.HomeFragment.*;
 
 /**
  * Created by Jona Dimovska on 28.1.2018.
@@ -126,7 +127,7 @@ public class MessagesFragment extends Fragment {
                 for (int i = 0; i < callList.size()   ; i++){
                     int length = callList.get(i).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(i).getSize(),
-                            callList.get(i).getNumber() + ": " + length + " char");
+                            getNameForNumber(callList.get(i).getNumber()) + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                 }
             } else {
@@ -135,7 +136,7 @@ public class MessagesFragment extends Fragment {
                 while (total / totalAll < 0.75) {
                     int length = callList.get(counter).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getSize(),
-                            callList.get(counter).getNumber() + ": " + length + " char");
+                            getNameForNumber(callList.get(counter).getNumber()) + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                     total += callList.get(counter).getSize();
                     counter++;
@@ -166,7 +167,7 @@ public class MessagesFragment extends Fragment {
                     if (times == 1)
                         s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(i).getFrequency(),
-                            callList.get(i).getNumber() + ": " + times + " time" + s);
+                            getNameForNumber(callList.get(i).getNumber()) + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                 }
             } else {
@@ -178,7 +179,7 @@ public class MessagesFragment extends Fragment {
                     if (times == 1)
                         s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getFrequency(),
-                            callList.get(counter).getNumber() + ": " + times + " time" + s);
+                            getNameForNumber(callList.get(counter).getNumber()) + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                     total += callList.get(counter).getFrequency();
                     counter++;
@@ -207,7 +208,7 @@ public class MessagesFragment extends Fragment {
         data.setDrawValues(false);
         pieChart.setData(data);
         pieChart.setEntryLabelColor(Color.WHITE);
-        pieChart.setEntryLabelTextSize(10f);
+        pieChart.setEntryLabelTextSize(11f);
 
         pieChart.highlightValues(null);
         pieChart.setDescription( null);
@@ -223,7 +224,16 @@ public class MessagesFragment extends Fragment {
         dataSet.setColors(colors);
         pieChart.invalidate();
     }
-
+    private String getNameForNumber(String number) {
+        if(!allPeopleList.isEmpty()) {
+            for(int i = 0; i< allPeopleList.size(); i++) {
+                if(allPeopleList.get(i).getNumber().equals(number)) {
+                    return allPeopleList.get(i).getName();
+                }
+            }
+        }
+        return number;
+    }
 
     private void initializingViews() {
         pieChartIncomingFrequency = (PieChart) getView().findViewById(R.id.idPieChartIncomingFrequency_messages);

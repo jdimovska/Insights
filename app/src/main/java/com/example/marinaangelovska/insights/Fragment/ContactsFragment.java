@@ -250,7 +250,7 @@ public class ContactsFragment extends Fragment {
         pieChart.setData(data);
 
         pieChart.setEntryLabelColor(Color.WHITE);
-        pieChart.setEntryLabelTextSize(10f);
+        pieChart.setEntryLabelTextSize(11f);
 
         pieChart.highlightValues(null);
         pieChart.setDescription( null);
