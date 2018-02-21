@@ -157,6 +157,7 @@ public class AppsService {
         }
         NetworkStats.Bucket bucket = new NetworkStats.Bucket();
         networkStats.getNextBucket(bucket);
+        networkStats.close();
         return bucket.getRxBytes();
     }
 

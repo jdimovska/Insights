@@ -1,6 +1,7 @@
 package com.example.marinaangelovska.insights.Fragment;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.usage.NetworkStatsManager;
 import android.app.usage.UsageStats;
@@ -56,6 +57,7 @@ import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog
  * Created by marinaangelovska on 2/2/18.
  */
 
+@RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
 public class HomeFragment extends Fragment {
 
     public static final String ACTION_USAGE_ACCESS_SETTINGS = Settings.ACTION_USAGE_ACCESS_SETTINGS;
@@ -122,6 +124,7 @@ public class HomeFragment extends Fragment {
         return queryUsageStats;
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
