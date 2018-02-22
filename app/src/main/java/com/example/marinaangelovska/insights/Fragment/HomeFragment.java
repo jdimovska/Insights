@@ -28,6 +28,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 
 import com.example.marinaangelovska.insights.Adapters.CustomPeopleAdapter;
+import com.example.marinaangelovska.insights.Comparators.PieEntryComparator;
 import com.example.marinaangelovska.insights.Model.Application;
 import com.example.marinaangelovska.insights.Model.NetworkUsage;
 import com.example.marinaangelovska.insights.Model.Person;
@@ -196,6 +197,7 @@ public class HomeFragment extends Fragment {
             pieEntries.add(new PieEntry(app.getTime() / 3600f, app.getName()+ ": " + df.format(app.getTime() / 3600f) + "h"));
             totalAppsTime += (app.getTime() / 36000f);
         }
+
         float restOfday = 0;
         if(totalHours > totalHoursSleep) {
             restOfday = (totalHours - totalHoursSleep);
@@ -212,6 +214,7 @@ public class HomeFragment extends Fragment {
         if(restOfday > 0)
             pieEntries.add(new PieEntry( restOfday, "Daily Life: " + df.format(restOfday) + "h"));
 
+        Collections.sort(pieEntries,new PieEntryComparator());
         bindDatasetToChart(pieEntries, pieChart);
 
     }
