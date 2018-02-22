@@ -37,7 +37,8 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + PeopleContract.PeopleEntry.TABLE_NAME + " (" +
                     PeopleContract.PeopleEntry._ID + " INTEGER PRIMARY KEY," +
                     PeopleContract.PeopleEntry.COLUMN_NAME_NAME + " TEXT," +
-                    PeopleContract.PeopleEntry.COLUMN_NAME_NUMBER + " TEXT);";
+                    PeopleContract.PeopleEntry.COLUMN_NAME_NUMBER + " TEXT," +
+                    PeopleContract.PeopleEntry.COLUMN_NAME_FACTOR + " TEXT);";
 
 
 

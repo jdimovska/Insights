@@ -55,29 +55,28 @@ public class PeopleService {
         SQLiteDatabase db = helper.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         Person person = null;
+        boolean flag =true;
         if (cursor.moveToFirst()) {
             do {
+                flag = true;
                 String id = cursor.getString(0);
                 String name = cursor.getString(1);
                 String number = cursor.getString(2);
+                String phFactor = cursor.getString(3);
+                double factor = Double.parseDouble(phFactor);
+                person = new Person(name, number, factor);
 
-                int factor = 0;
-                for (int i=0;i < list.size(); i++) {
-                    String normalizeNumber = NormalizeNumber.normalizeNumber(list.get(i).getNumber());
-                    if(normalizeNumber.equals(number)) {
-                        factor = list.get(i).getOccurrence();
-                        break;
+                for(int i=0;i<peopleList.size();i++) {
+                    if(peopleList.get(i).getNumber().equals(person.getNumber())) {
+                        flag =false;
                     }
                 }
-                person = new Person(name, number, factor);
-                if (!peopleList.contains(person))
+                if(flag) {
                     peopleList.add(person);
-
-
+                }
 
             } while (cursor.moveToNext());
         }
-
         Collections.sort(peopleList, new FactorComparator());
         return peopleList;
     }

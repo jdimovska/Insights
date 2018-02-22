@@ -3,27 +3,34 @@ package com.example.marinaangelovska.insights.Fragment;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.example.marinaangelovska.insights.Helper.AppDatabaseHelper;
+import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.MessagesService;
+import com.example.marinaangelovska.insights.Service.NormalizeNumber;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,6 +43,8 @@ import static com.example.marinaangelovska.insights.Fragment.HomeFragment.*;
 
 public class MessagesFragment extends Fragment {
     MessagesService messagesService;
+
+    AppDatabaseHelper helper;
 
     PieChart pieChartIncomingFrequency;
     PieChart pieChartOutgoingFrequency;
@@ -67,6 +76,7 @@ public class MessagesFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        helper = new AppDatabaseHelper(getActivity());
         messagesService = new MessagesService(getActivity());
         map = messagesService.getMessageLogDetails();
 
@@ -127,7 +137,7 @@ public class MessagesFragment extends Fragment {
                 for (int i = 0; i < callList.size()   ; i++){
                     int length = callList.get(i).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(i).getSize(),
-                            callList.get(i).getNumber() + ": " + length + " char");
+                            getNameForNumber(callList.get(i).getNumber()) + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                 }
             } else {
@@ -136,7 +146,7 @@ public class MessagesFragment extends Fragment {
                 while (total / totalAll < 0.75) {
                     int length = callList.get(counter).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getSize(),
-                            callList.get(counter).getNumber() + ": " + length + " char");
+                            getNameForNumber(callList.get(counter).getNumber()) + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                     total += callList.get(counter).getSize();
                     counter++;
@@ -179,7 +189,7 @@ public class MessagesFragment extends Fragment {
                     if (times == 1)
                         s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getFrequency(),
-                            callList.get(counter).getNumber() + ": " + times + " time" + s);
+                            getNameForNumber(callList.get(counter).getNumber()) + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                     total += callList.get(counter).getFrequency();
                     counter++;
@@ -225,14 +235,27 @@ public class MessagesFragment extends Fragment {
         pieChart.invalidate();
     }
     private String getNameForNumber(String number) {
-        if(!allPeopleList.isEmpty()) {
-            for(int i = 0; i< allPeopleList.size(); i++) {
-                if(allPeopleList.get(i).getNumber().equals(number)) {
-                    return allPeopleList.get(i).getName();
+        NormalizeNumber nm =new NormalizeNumber();
+        number = nm.normalizeNumber(number);
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.query("people", null, "number=?", new String[] {number }, null, null, null);
+
+
+        String name = number;
+
+        if (cursor.moveToFirst()) {
+            do {
+                    if(number.equals(nm.normalizeNumber(cursor.getString(2)))){
+                    name = cursor.getString(1);
+                    break;
                 }
-            }
+
+
+            } while (cursor.moveToNext());
         }
-        return number;
+        return name;
+
     }
 
     private void initializingViews() {

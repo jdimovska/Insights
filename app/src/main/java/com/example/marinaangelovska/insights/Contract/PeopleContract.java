@@ -12,5 +12,7 @@ public class PeopleContract {
         public static final String TABLE_NAME = "people";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_NUMBER = "number";
+        public static final String COLUMN_NAME_FACTOR = "factor";
+
     }
 }

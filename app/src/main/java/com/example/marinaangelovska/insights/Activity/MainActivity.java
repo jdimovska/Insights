@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity
         SQLiteDatabase dbDelete = helper.getWritableDatabase();
         dbDelete.execSQL("Delete from call_log");
         dbDelete.execSQL("Delete from message_log");
+        dbDelete.execSQL("Delete from people");
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
             Cursor managedCursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
@@ -209,12 +210,22 @@ public class MainActivity extends AppCompatActivity
             String phDisplayName = managedCursor.getString(display_name);
             String phNumber = managedCursor.getString(number);
             phNumber = NormalizeNumber.normalizeNumber(phNumber);
+            NormalizeNumber normalizeNumber = new NormalizeNumber();
+            phNumber = normalizeNumber.normalizeNumber(phNumber);
 
-            String sql="INSERT INTO people(name,number) VALUES(?,?)";
+
+            SQLiteDatabase db = helper.getWritableDatabase();
+            String[] columns ={"name"};
+            Cursor cursor = db.query("call_log", columns, "type=? and number=?", new String[] { "1", phNumber }, null, null, null);
+            int factor = cursor.getCount();
+            String phFactor = Integer.toString(factor);
+
+            String sql="INSERT INTO people(name,number,factor) VALUES(?,?,?)";
             SQLiteStatement statement=dbDelete.compileStatement(sql);
 
             statement.bindString(1,phDisplayName);
             statement.bindString(2,phNumber);
+            statement.bindDouble(3,factor);
             statement.execute();
 
 
@@ -290,6 +301,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+        dialog.dismiss();
     }
 
     protected void hideKeyboard(View view)
@@ -370,60 +382,28 @@ public class MainActivity extends AppCompatActivity
             finalHandler.postDelayed(changeView, 400);
 
         } else if (id == R.id.nav_contacts) {
-            setUpDialogViews("Contacts loading...");
-            dialog.show();
-            final Runnable changeView = new Runnable()
-            {
-                public void run()
-                {
-                    ContactsFragment contactsFragment = new ContactsFragment();
-                    android.app.FragmentManager fragmentManager = getFragmentManager();
-                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.root_layout, contactsFragment);
-                    fragmentTransaction.commit();
-                    fragmentManager.executePendingTransactions();
-
-                }
-            };
-
-            finalHandler.postDelayed(changeView, 300);
+            ContactsFragment contactsFragment = new ContactsFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, contactsFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
 
         } else if (id == R.id.nav_messages) {
-            setUpDialogViews("Messages loading...");
-            dialog.show();
-
-            final Runnable changeView = new Runnable()
-            {
-                public void run()
-                {
-                    MessagesFragment messagesFragment = new MessagesFragment();
-                    android.app.FragmentManager fragmentManager = getFragmentManager();
-                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.root_layout, messagesFragment);
-                    fragmentTransaction.commit();
-                    fragmentManager.executePendingTransactions();
-
-                }
-            };
-            finalHandler.postDelayed(changeView, 300);
+            MessagesFragment messagesFragment = new MessagesFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, messagesFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
 
          } else if(id == R.id.nav_people) {
-            setUpDialogViews("People loading...");
-            dialog.show();
-            final Runnable changeView = new Runnable()
-            {
-                public void run()
-                {
-                    PeopleFragment peopleFragment = new PeopleFragment();
-                    android.app.FragmentManager fragmentManager = getFragmentManager();
-                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.root_layout, peopleFragment);
-                    fragmentTransaction.commit();
-                    fragmentManager.executePendingTransactions();
-
-                }
-            };
-            finalHandler.postDelayed(changeView, 300);
+            PeopleFragment peopleFragment = new PeopleFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, peopleFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
         } else if(id == R.id.nav_apps) {
 
             setUpDialogViews("Applications loading...");
