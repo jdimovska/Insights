@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.CallLog;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
@@ -45,6 +46,7 @@ import com.example.marinaangelovska.insights.Fragment.PeopleFragment;
 import com.example.marinaangelovska.insights.Helper.AppDatabaseHelper;
 import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.Message;
+import com.example.marinaangelovska.insights.Model.Person;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.NormalizeNumber;
 
@@ -118,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         setUpScreen();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -193,6 +196,26 @@ public class MainActivity extends AppCompatActivity
             }
             managedCursor.close();
         }
+
+
+        Cursor managedCursor = this.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+        int display_name = managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        int number = managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        while (managedCursor.moveToNext()) {
+            String phDisplayName = managedCursor.getString(display_name);
+            String phNumber = managedCursor.getString(number);
+            phNumber = NormalizeNumber.normalizeNumber(phNumber);
+
+            String sql="INSERT INTO people(name,number) VALUES(?,?)";
+            SQLiteStatement statement=dbDelete.compileStatement(sql);
+
+            statement.bindString(1,phDisplayName);
+            statement.bindString(2,phNumber);
+            statement.execute();
+
+
+        }
+        managedCursor.close();
     }
 
 

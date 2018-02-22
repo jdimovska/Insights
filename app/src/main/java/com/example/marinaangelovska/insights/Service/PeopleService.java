@@ -2,6 +2,7 @@ package com.example.marinaangelovska.insights.Service;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
@@ -9,10 +10,13 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.example.marinaangelovska.insights.Comparators.FactorComparator;
+import com.example.marinaangelovska.insights.Helper.AppDatabaseHelper;
+import com.example.marinaangelovska.insights.Model.Message;
 import com.example.marinaangelovska.insights.Model.NodeContact;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 import com.example.marinaangelovska.insights.Model.Person;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,12 +34,14 @@ public class PeopleService {
 
     private Context context;
     private ContactsService contactsService;
+    private AppDatabaseHelper helper;
     HashMap<Integer, List<NodeContact>> map;
     List<NodeContact> list;
 
     public PeopleService(Context context) {
 
         this.context = context;
+        helper = new AppDatabaseHelper(context);
         this.contactsService = new ContactsService(context);
 
     }
@@ -44,46 +50,35 @@ public class PeopleService {
     public ArrayList<Person> getPeople(){
         map = contactsService.getCallLogDetails();
         list = map.get(1);
-
         ArrayList<Person> peopleList = new ArrayList<>();
-        Cursor managedCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
-        int display_name = managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int number = managedCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        String query = "SELECT  * FROM people";
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        Person person = null;
+        if (cursor.moveToFirst()) {
+            do {
+                String id = cursor.getString(0);
+                String name = cursor.getString(1);
+                String number = cursor.getString(2);
 
-        while (managedCursor.moveToNext()) {
-            String phDisplayName = managedCursor.getString(display_name);
-            String phNumber = managedCursor.getString(number);
-            phNumber = NormalizeNumber.normalizeNumber(phNumber);
-            int factor = 0;
-            for (int i=0;i < list.size(); i++) {
-                String n = NormalizeNumber.normalizeNumber(list.get(i).getNumber());
-                if(n.equals(phNumber)) {
-                 factor = list.get(i).getOccurrence();
-                 break;
+                int factor = 0;
+                for (int i=0;i < list.size(); i++) {
+                    String normalizeNumber = NormalizeNumber.normalizeNumber(list.get(i).getNumber());
+                    if(normalizeNumber.equals(number)) {
+                        factor = list.get(i).getOccurrence();
+                        break;
+                    }
                 }
-            }
-            Person person = new Person(phDisplayName, phNumber, factor);
-            if (!peopleList.contains(person))
-                peopleList.add(person);
+                person = new Person(name, number, factor);
+                if (!peopleList.contains(person))
+                    peopleList.add(person);
 
+
+
+            } while (cursor.moveToNext());
         }
 
         Collections.sort(peopleList, new FactorComparator());
-        ArrayList<Person> uniqueList = new ArrayList<>();
-        int counter = 0;
-        if(!peopleList.isEmpty())
-            uniqueList.add(peopleList.get(0));
-
-        for(int i = 1; i < peopleList.size(); i++) {
-            if(!uniqueList.get(counter).getName().equals(peopleList.get(i).getName())) {
-                uniqueList.add(peopleList.get(i));
-                counter++;
-            }
-        }
-        return uniqueList;
+        return peopleList;
     }
-
-
-
-
 }

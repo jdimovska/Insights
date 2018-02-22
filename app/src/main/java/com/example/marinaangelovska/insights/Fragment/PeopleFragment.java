@@ -60,7 +60,7 @@ public class PeopleFragment extends Fragment {
         allPeople = new ArrayList<Person>();
         peopleService = new PeopleService(getActivity());
         peopleList = peopleService.getPeople();
-        adapter=new CustomPeopleAdapter(getActivity(), peopleList);
+        adapter = new CustomPeopleAdapter(getActivity(), peopleList);
         allPeople.addAll(peopleList);
 
         viewList = (ListView)view.findViewById (R.id.peopleList);

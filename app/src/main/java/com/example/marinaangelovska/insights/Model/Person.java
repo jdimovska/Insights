@@ -9,6 +9,7 @@ public class Person {
     String name;
     String number;
     int factor;
+
     public Person(String name, String number, int factor){
         this.name = name;
         this.number = number;

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.marinaangelovska.insights.Contract.CallLogDatabaseContract;
 import com.example.marinaangelovska.insights.Contract.MessageLogDatabaseContract;
+import com.example.marinaangelovska.insights.Contract.PeopleContract;
 
 /**
  * Created by Jona Dimovska on 22.2.2018.
@@ -32,6 +33,14 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
                     MessageLogDatabaseContract.MessageLogEntry.COLUMN_NAME_DATE + " TEXT," +
                     MessageLogDatabaseContract.MessageLogEntry.COLUMN_NAME_CONTENT + " TEXT);";
 
+    public static final String SQL_CREATE_PEOPLE =
+            "CREATE TABLE " + PeopleContract.PeopleEntry.TABLE_NAME + " (" +
+                    PeopleContract.PeopleEntry._ID + " INTEGER PRIMARY KEY," +
+                    PeopleContract.PeopleEntry.COLUMN_NAME_NAME + " TEXT," +
+                    PeopleContract.PeopleEntry.COLUMN_NAME_NUMBER + " TEXT);";
+
+
+
     public AppDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -40,6 +49,7 @@ public class AppDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_CALL_LOG);
         db.execSQL(SQL_CREATE_MESSAGE_LOG);
+        db.execSQL(SQL_CREATE_PEOPLE);
     }
 
     @Override
