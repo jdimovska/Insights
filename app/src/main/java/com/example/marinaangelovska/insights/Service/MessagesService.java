@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.icu.util.ULocale;
 import android.os.Build;
 import android.provider.Telephony;
@@ -13,6 +14,8 @@ import android.support.v4.app.ActivityCompat;
 
 import com.example.marinaangelovska.insights.Comparators.FrequencyComparatorMessage;
 import com.example.marinaangelovska.insights.Comparators.SizeComparator;
+import com.example.marinaangelovska.insights.Helper.AppDatabaseHelper;
+import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.Message;
 import com.example.marinaangelovska.insights.Model.NodeMessage;
 
@@ -30,8 +33,10 @@ import java.util.List;
 public class MessagesService {
 
     private Context context;
+    private AppDatabaseHelper helper;
     public MessagesService(Context context){
         this.context = context;
+        helper = new AppDatabaseHelper(context);
     }
 
     public List<NodeMessage> getMostFrequentMessages(List<NodeMessage> callList) {
@@ -51,39 +56,34 @@ public class MessagesService {
 
 
         HashMap<Integer, List<NodeMessage>> allTypeMessageList = new HashMap<>();
-        for(int i=0;i<messageTypes.size();i++) {
+        for(int i = 0; i < messageTypes.size(); i++) {
             HashMap<String, List<Message>> messageList = new HashMap<String, List<Message>>();
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-                Cursor managedCursor = context.getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, null);
-
-                int body = managedCursor.getColumnIndex(Telephony.Sms.BODY);
-                int phone = managedCursor.getColumnIndex(Telephony.Sms.ADDRESS);
-                int date = managedCursor.getColumnIndex(Telephony.Sms.DATE);
-                int type = managedCursor.getColumnIndex(Telephony.Sms.TYPE);
-
-                while (managedCursor.moveToNext()) {
-
-                    String phPhone = managedCursor.getString(phone);
-                    phPhone = NormalizeNumber.normalizeNumber(phPhone);
-                    String phBody = managedCursor.getString(body);
-                    String phDate = managedCursor.getString(date);
-                    Date formatedDate = new Date(Long.valueOf(managedCursor.getString(date)));
-                    String messageType = managedCursor.getString(type);
-                    int dircode = Integer.parseInt(messageType);
+            String query = "SELECT  * FROM message_log";
+            SQLiteDatabase db = helper.getWritableDatabase();
+            Cursor cursor = db.rawQuery(query, null);
+            Message message = null;
+            if (cursor.moveToFirst()) {
+                do {
+                    String id = cursor.getString(0);
+                    String number = cursor.getString(1);
+                    String type = cursor.getString(2);
+                    String date = cursor.getString(3);
+                    String content = cursor.getString(4);
+                    int dircode = Integer.parseInt(type);
+                    Date callDayTime = new Date(Long.valueOf(date));
+                    message = new Message(number, callDayTime, content);
 
                     if (dircode == messageTypes.get(i)) {
-                        if (messageList.containsKey(phPhone)) {
-                            messageList.get(phPhone).add(new Message(phPhone, formatedDate, phBody));
+                        if (messageList.containsKey(number)) {
+                            messageList.get(number).add(message);
                         } else {
-                            List<Message> singleMessageList = new ArrayList<>();
-                            singleMessageList.add(new Message(phPhone, formatedDate, phBody));
-                            messageList.put(phPhone, singleMessageList);
+                            List<Message> singleCallList = new ArrayList<>();
+                            singleCallList.add(message);
+                            messageList.put(number, singleCallList);
                         }
                     }
 
-
-                }
-                managedCursor.close();
+                } while (cursor.moveToNext());
             }
             List<NodeMessage> list = new ArrayList<NodeMessage>();
             Iterator itr = messageList.keySet().iterator();

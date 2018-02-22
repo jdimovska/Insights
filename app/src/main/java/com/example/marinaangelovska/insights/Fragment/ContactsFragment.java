@@ -74,8 +74,6 @@ public class ContactsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         contactsService = new ContactsService(getActivity());
-        peopleService = new PeopleService(getActivity());
-        peopleService.getPeople();
 
         map = contactsService.getCallLogDetails();
         df.setRoundingMode(RoundingMode.CEILING);

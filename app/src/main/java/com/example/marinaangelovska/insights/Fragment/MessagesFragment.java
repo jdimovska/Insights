@@ -127,7 +127,7 @@ public class MessagesFragment extends Fragment {
                 for (int i = 0; i < callList.size()   ; i++){
                     int length = callList.get(i).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(i).getSize(),
-                            getNameForNumber(callList.get(i).getNumber()) + ": " + length + " char");
+                            callList.get(i).getNumber() + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                 }
             } else {

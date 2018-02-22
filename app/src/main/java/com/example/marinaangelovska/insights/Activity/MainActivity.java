@@ -9,12 +9,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.CallLog;
 import android.provider.Settings;
+import android.provider.Telephony;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.design.widget.NavigationView;
@@ -36,7 +42,11 @@ import com.example.marinaangelovska.insights.Fragment.HomeFragment;
 import com.example.marinaangelovska.insights.Fragment.MessagesFragment;
 import com.example.marinaangelovska.insights.Fragment.NetworkFragment;
 import com.example.marinaangelovska.insights.Fragment.PeopleFragment;
+import com.example.marinaangelovska.insights.Helper.AppDatabaseHelper;
+import com.example.marinaangelovska.insights.Model.Call;
+import com.example.marinaangelovska.insights.Model.Message;
 import com.example.marinaangelovska.insights.R;
+import com.example.marinaangelovska.insights.Service.NormalizeNumber;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,9 +54,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import static com.example.marinaangelovska.insights.Fragment.HomeFragment.unlockedTimesButton;
 
@@ -65,6 +77,7 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences sharedPreferences;
     int unlockedTimes = 0;
     PhoneUnlockedReceiver receiver;
+    AppDatabaseHelper helper;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -89,7 +102,7 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.READ_PHONE_STATE};
 
-        if(!hasPermissions(getApplicationContext(), PERMISSIONS)){
+        if (!hasPermissions(getApplicationContext(), PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
 
@@ -101,11 +114,88 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
         setUpScreen();
-
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        helper = new AppDatabaseHelper(getApplicationContext());
+        fillDatabase();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void fillDatabase() {
+        SQLiteDatabase dbDelete = helper.getWritableDatabase();
+        dbDelete.execSQL("Delete from call_log");
+        dbDelete.execSQL("Delete from message_log");
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+            Cursor managedCursor = this.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
+
+            int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
+            int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
+            int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+            int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+            int name = managedCursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+
+            while (managedCursor.moveToNext()) {
+                String phNumber = managedCursor.getString(number);
+                phNumber = NormalizeNumber.normalizeNumber(phNumber);
+                String callType = managedCursor.getString(type);
+                String phName = managedCursor.getString(name);
+                String phDate = managedCursor.getString(date);
+                String callDuration = managedCursor.getString(duration);
+
+                String sql="INSERT INTO call_log(name,type,number,date,duration) VALUES(?,?,?,?,?)";
+                SQLiteStatement statement=dbDelete.compileStatement(sql);
+
+                if(phName == null) {
+                    phName = "Unknown";
+                }
+                statement.bindString(1,phName);
+                statement.bindString(2,callType);
+                statement.bindString(3,phNumber);
+                statement.bindString(4,phDate);
+                statement.bindString(5,callDuration);
+                statement.execute();
+
+            }
+            managedCursor.close();
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+            Cursor managedCursor = this.getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, null);
+
+            int body = managedCursor.getColumnIndex(Telephony.Sms.BODY);
+            int phone = managedCursor.getColumnIndex(Telephony.Sms.ADDRESS);
+            int date = managedCursor.getColumnIndex(Telephony.Sms.DATE);
+            int type = managedCursor.getColumnIndex(Telephony.Sms.TYPE);
+
+
+            while (managedCursor.moveToNext()) {
+                String phNumber = managedCursor.getString(phone);
+                phNumber = NormalizeNumber.normalizeNumber(phNumber);
+                String callType = managedCursor.getString(type);
+                String phDate = managedCursor.getString(date);
+                String phBody = managedCursor.getString(body);
+
+                String sql="INSERT INTO message_log(number,type,date,content) VALUES(?,?,?,?)";
+                SQLiteStatement statement=dbDelete.compileStatement(sql);
+
+                statement.bindString(1,phNumber);
+                statement.bindString(2,callType);
+                statement.bindString(3,phDate);
+                statement.bindString(4,phBody);
+                statement.execute();
+
+            }
+            managedCursor.close();
+        }
+    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void setUpScreen() {
         AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
@@ -128,6 +218,7 @@ public class MainActivity extends AppCompatActivity
         } else
             loadAboutFragment();
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void checkPermissions() {
         AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
@@ -366,7 +457,7 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-    public class PhoneUnlockedReceiver extends BroadcastReceiver {
+    class PhoneUnlockedReceiver extends BroadcastReceiver {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.provider.CallLog;
 import android.support.annotation.RequiresApi;
@@ -11,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 
 import com.example.marinaangelovska.insights.Comparators.DurationComparator;
 import com.example.marinaangelovska.insights.Comparators.FrequencyComparator;
+import com.example.marinaangelovska.insights.Helper.AppDatabaseHelper;
 import com.example.marinaangelovska.insights.Model.Call;
 import com.example.marinaangelovska.insights.Model.NodeContact;
 
@@ -30,9 +32,11 @@ import java.util.List;
 public class ContactsService {
 
     private Context context;
+    private AppDatabaseHelper helper;
 
     public ContactsService(Context context) {
         this.context = context;
+        helper = new AppDatabaseHelper(context);
     }
 
     public List<NodeContact> getMostFrequentCalls(List<NodeContact> callList1) {
@@ -56,41 +60,37 @@ public class ContactsService {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public  HashMap<Integer, List<NodeContact>> getCallLogDetails() {
-
         List<Integer> callTypes = this.getCallTypes();
-
         HashMap<Integer, List<NodeContact>> allTypeCallsList = new HashMap<>();
         for(int i=0; i < callTypes.size(); i++) {
             HashMap<String, List<Call>> callList = new HashMap<String, List<Call>>();
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
-                Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
-
-                int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
-                int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
-                int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
-                int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-                int name = managedCursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
-
-                while (managedCursor.moveToNext()) {
-                    String phNumber = managedCursor.getString(number);
-                    phNumber = NormalizeNumber.normalizeNumber(phNumber);
-                    String callType = managedCursor.getString(type);
-                    String phName = managedCursor.getString(name);
-                    Date callDayTime = new Date(Long.valueOf(managedCursor.getString(date)));
-                    String callDuration = managedCursor.getString(duration);
-                    int dircode = Integer.parseInt(callType);
+            String query = "SELECT  * FROM call_log";
+            SQLiteDatabase db = helper.getWritableDatabase();
+            Cursor cursor = db.rawQuery(query, null);
+            Call call = null;
+            if (cursor.moveToFirst()) {
+                do {
+                    String id = cursor.getString(0);
+                    String name = cursor.getString(1);
+                    String type = cursor.getString(2);
+                    String number = cursor.getString(3);
+                    String date = cursor.getString(4);
+                    String duration = cursor.getString(5);
+                    int dircode = Integer.parseInt(type);
+                    Date callDayTime = new Date(Long.valueOf(date));
+                    call = new Call(name, callDayTime, duration);
 
                     if (dircode == callTypes.get(i)) {
-                        if (callList.containsKey(phNumber)) {
-                            callList.get(phNumber).add(new Call(phName, callDayTime, callDuration));
+                        if (callList.containsKey(number)) {
+                            callList.get(number).add(call);
                         } else {
                             List<Call> singleCallList = new ArrayList<>();
-                            singleCallList.add(new Call(phName, callDayTime, callDuration));
-                            callList.put(phNumber, singleCallList);
+                            singleCallList.add(call);
+                            callList.put(number, singleCallList);
                         }
                     }
-                }
-                managedCursor.close();
+
+                } while (cursor.moveToNext());
             }
 
             List<NodeContact> list = new ArrayList<>();
