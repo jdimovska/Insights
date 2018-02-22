@@ -136,7 +136,7 @@ public class MessagesFragment extends Fragment {
                 while (total / totalAll < 0.75) {
                     int length = callList.get(counter).getSize();
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getSize(),
-                            getNameForNumber(callList.get(counter).getNumber()) + ": " + length + " char");
+                            callList.get(counter).getNumber() + ": " + length + " char");
                     pieEntryList.add(newPEntry);
                     total += callList.get(counter).getSize();
                     counter++;
@@ -179,7 +179,7 @@ public class MessagesFragment extends Fragment {
                     if (times == 1)
                         s = "";
                     PieEntry newPEntry = new PieEntry(callList.get(counter).getFrequency(),
-                            getNameForNumber(callList.get(counter).getNumber()) + ": " + times + " time" + s);
+                            callList.get(counter).getNumber() + ": " + times + " time" + s);
                     pieEntryList.add(newPEntry);
                     total += callList.get(counter).getFrequency();
                     counter++;

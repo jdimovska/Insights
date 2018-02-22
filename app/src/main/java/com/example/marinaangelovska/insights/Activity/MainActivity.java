@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -125,7 +126,10 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         helper = new AppDatabaseHelper(getApplicationContext());
-        fillDatabase();
+        dialog.show();
+        setUpDialogViews("Loading content...");
+        DatabaseTask task =new DatabaseTask();
+        task.execute();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -260,6 +264,22 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public class DatabaseTask extends AsyncTask<String,Void,String> {
+
+
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        protected String doInBackground(String... urls) {
+            fillDatabase();
+            return "Done";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            dialog.hide();
+        }
+    }
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
