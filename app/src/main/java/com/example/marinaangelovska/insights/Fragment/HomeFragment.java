@@ -153,7 +153,6 @@ public class HomeFragment extends Fragment {
         favoritePeopleList = peopleService.getPeople();
         allPeopleList = new ArrayList<Person>(favoritePeopleList);
         favoritePeopleList = new ArrayList<>(favoritePeopleList.subList(0, 5));
-        appUsageList = appService.getAppsWithNetworkUsage((NetworkStatsManager) getActivity().getSystemService(Context.NETWORK_STATS_SERVICE));
 
         pieChart = (PieChart) view.findViewById(R.id.piechart);
 

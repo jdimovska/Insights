@@ -1,5 +1,6 @@
 package com.example.marinaangelovska.insights.Fragment;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.app.usage.UsageEvents;
@@ -27,6 +28,7 @@ import com.example.marinaangelovska.insights.Service.AppsService;
 import com.example.marinaangelovska.insights.Service.ContactsService;
 import com.example.marinaangelovska.insights.Service.PeopleService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,13 +59,21 @@ public class AppsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
+    @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     List<UsageStats> getUsageStatistics() {
         Date today = new Date();
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         long startTime = calendar.getTimeInMillis();
+        //if Sunday
+        if(startTime > endTime) {
+            startTime -= 604800000;
+        }
         List<UsageStats> queryUsageStats = new ArrayList<>();
         Map<String, UsageStats> queryUsageStats1 = mUsageStatsManager.queryAndAggregateUsageStats(startTime,
                         endTime);

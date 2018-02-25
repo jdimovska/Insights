@@ -72,13 +72,15 @@ public class MainActivity extends AppCompatActivity
     private static final int PERMISSIONS_REQUEST_READ_CALL_LOG = 100;
     private static final int PERMISSIONS_REQUEST_READ_SMS_LOG = 200;
     public static ProgressDialog dialog;
+    private static Context context;
     final Handler finalHandler = new Handler();
     Calendar cal = Calendar.getInstance();
     Date currentDate;
     Date nextDate;
     SimpleDateFormat sdf;
-    SharedPreferences sharedPreferences;
-    int unlockedTimes = 0;
+
+    static SharedPreferences sharedPreferences;
+    static int unlockedTimes = 0;
     PhoneUnlockedReceiver receiver;
     AppDatabaseHelper helper;
 
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity
         dialog = new ProgressDialog(MainActivity.this);
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
+        context = getApplicationContext();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -231,6 +234,7 @@ public class MainActivity extends AppCompatActivity
 
         }
         managedCursor.close();
+
     }
 
 
@@ -458,12 +462,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void isNewDay() throws ParseException {
+    public static void  isNewDay() throws ParseException {
         Calendar c = Calendar.getInstance();
         int thisDay = c.get(Calendar.DAY_OF_YEAR);
         long todayMillis = c.getTimeInMillis();
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         long last = prefs.getLong("date", System.currentTimeMillis());
         c.setTimeInMillis(last);
         int lastDay = c.get(Calendar.DAY_OF_YEAR);
@@ -480,7 +484,7 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-    class PhoneUnlockedReceiver extends BroadcastReceiver {
+   public static class PhoneUnlockedReceiver extends BroadcastReceiver {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onReceive(Context context, Intent intent) {
