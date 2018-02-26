@@ -410,22 +410,13 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.executePendingTransactions();
         } else if(id == R.id.nav_apps) {
 
-            setUpDialogViews("Applications loading...");
-            dialog.show();
-            final Runnable changeView = new Runnable()
-            {
-                public void run()
-                {
-                    AppsFragment appFragment = new AppsFragment();
-                    android.app.FragmentManager fragmentManager = getFragmentManager();
-                    android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.root_layout, appFragment);
-                    fragmentTransaction.commit();
-                    fragmentManager.executePendingTransactions();
-                }
-            };
+            AppsFragment appFragment = new AppsFragment();
+            android.app.FragmentManager fragmentManager = getFragmentManager();
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.root_layout, appFragment);
+            fragmentTransaction.commit();
+            fragmentManager.executePendingTransactions();
 
-            finalHandler.postDelayed(changeView, 500);
 
         } else if(id == R.id.nav_network) {
             NetworkFragment networkFragment = new NetworkFragment();

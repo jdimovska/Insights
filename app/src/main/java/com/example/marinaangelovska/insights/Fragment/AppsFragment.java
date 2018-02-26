@@ -1,14 +1,13 @@
 package com.example.marinaangelovska.insights.Fragment;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.app.usage.UsageEvents;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,19 +24,15 @@ import com.example.marinaangelovska.insights.Adapters.CustomAppsAdapter;
 import com.example.marinaangelovska.insights.Model.Application;
 import com.example.marinaangelovska.insights.R;
 import com.example.marinaangelovska.insights.Service.AppsService;
-import com.example.marinaangelovska.insights.Service.ContactsService;
-import com.example.marinaangelovska.insights.Service.PeopleService;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
-import static com.example.marinaangelovska.insights.Activity.MainActivity.dialog;
 
 
 /**
@@ -48,15 +43,19 @@ public class AppsFragment extends Fragment {
     UsageStatsManager mUsageStatsManager;
     CustomAppsAdapter adapter;
     List<UsageStats> usageStatsList;
+    Context context;
     AppsService appService;
     ArrayList<Application> appList;
     View view;
     ListView viewList;
 
+
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
 
     }
     @TargetApi(Build.VERSION_CODES.O)
@@ -96,41 +95,77 @@ public class AppsFragment extends Fragment {
         return queryUsageStats;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_app, container, false);
-        viewList=(ListView)view.findViewById (R.id.appsList);
-        mUsageStatsManager = (UsageStatsManager) getActivity()
-                .getSystemService(Context.USAGE_STATS_SERVICE);
-        usageStatsList = getUsageStatistics();
-        appService = new AppsService(getActivity(), getActivity());
-        appList = appService.getApps(usageStatsList);
-        adapter=new CustomAppsAdapter(getActivity(), appList);
-        viewList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
+        view = inflater.inflate(R.layout.fragment_app, container, false);
+
+        ApplicationTask task = new ApplicationTask();
+        task.execute();
         return view;
     }
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void loadApplications() {
 
 
-    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onResume() {
         super.onResume();
-        dialog.hide();
+
     }
     @Override
     public void onStart() {
         super.onStart();
-        dialog.hide();
+
     }
+
+     class ApplicationTask extends AsyncTask<String,Void,String> {
+        ProgressDialog nDialog;
+        @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+            nDialog =  new ProgressDialog(context);
+            nDialog.setMessage("Loading applications...");
+            nDialog.setCancelable(false);
+            nDialog.setInverseBackgroundForced(false);
+            nDialog.show();
+        }
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        protected String doInBackground(String... urls) {
+            viewList=(ListView)view.findViewById (R.id.appsList);
+
+            mUsageStatsManager = (UsageStatsManager) getActivity()
+                    .getSystemService(Context.USAGE_STATS_SERVICE);
+            usageStatsList = getUsageStatistics();
+            appService = new AppsService(getActivity(), getActivity());
+            appList = appService.getApps(usageStatsList);
+            return "Done";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            nDialog.hide();
+            adapter = new CustomAppsAdapter(getActivity(), appList);
+            viewList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
 }
