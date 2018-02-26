@@ -85,7 +85,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         unlockedTimesButton = (Button) getView().findViewById(R.id.unlockedTimes_button);
     }
 

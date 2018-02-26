@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int PERMISSIONS_REQUEST_READ_CALL_LOG = 100;
     private static final int PERMISSIONS_REQUEST_READ_SMS_LOG = 200;
+
     public static ProgressDialog dialog;
     private static Context context;
     final Handler finalHandler = new Handler();
@@ -79,6 +81,8 @@ public class MainActivity extends AppCompatActivity
     Date nextDate;
     SimpleDateFormat sdf;
 
+    boolean firstTimeUser = true;
+    String lastFragment;
     static SharedPreferences sharedPreferences;
     static int unlockedTimes = 0;
     PhoneUnlockedReceiver receiver;
@@ -95,7 +99,6 @@ public class MainActivity extends AppCompatActivity
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
         context = getApplicationContext();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -115,24 +118,33 @@ public class MainActivity extends AppCompatActivity
 
         sharedPreferences = getSharedPreferences("AppsPreferences", Context.MODE_PRIVATE);
         receiver = new PhoneUnlockedReceiver();
-
         checkPermissions();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
-        setUpScreen();
+        firstTimeUser = sharedPreferences.getBoolean("firstTimeUser",true);
+        lastFragment = sharedPreferences.getString("lastFragment", "Home");
+        if(firstTimeUser)
+            loadAboutFragment();
+        else {
+            loadContent();
+        }
+    }
+
+    public void loadContent() {
+        helper = new AppDatabaseHelper(getApplicationContext());
+        dialog.show();
+        setUpDialogViews("Loading content...");
+        DatabaseTask task =new DatabaseTask();
+        task.execute();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        helper = new AppDatabaseHelper(getApplicationContext());
-        dialog.show();
-        setUpDialogViews("Loading content...");
-        DatabaseTask task =new DatabaseTask();
-        task.execute();
+        loadContent();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -244,18 +256,27 @@ public class MainActivity extends AppCompatActivity
         int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
                 android.os.Process.myUid(), getPackageName());
         if (mode == AppOpsManager.MODE_ALLOWED) {
-            setUpDialogViews("Home screen loading...");
-            dialog.show();
-            final Runnable changeView = new Runnable()
-            {
-                public void run()
-                {
-                    loadHomeFragment();
-                    unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
-                    unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
-                }
-            };
-            finalHandler.postDelayed(changeView, 400);
+            lastFragment = sharedPreferences.getString("lastFragment", "Home");
+            if(lastFragment.equals("Home")) {
+                loadHomeFragment();
+                unlockedTimes = sharedPreferences.getInt("unlockedTimes", 0);
+                unlockedTimesButton.setText("Today you have unlocked your phone " + unlockedTimes + " times");
+            } else if (lastFragment.equals("Messages"))
+                loadMessagesFragment();
+            else if (lastFragment.equals("Apps"))
+                loadAppsFragment();
+            else if(lastFragment.equals("People"))
+                loadPeopleFragment();
+            else if(lastFragment.equals("Contacts"))
+                loadContactsFragment();
+            else if(lastFragment.equals("Network"))
+                loadNetworkFragment();
+            else if(lastFragment.equals("About"))
+                loadAboutFragment();
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("firstTimeUser", false);
+            editor.commit();
 
         } else
             loadAboutFragment();
@@ -272,15 +293,19 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
     private void setUpDialogViews(String message) {
         dialog.setMessage(message);
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
 
     }
-
     public class DatabaseTask extends AsyncTask<String,Void,String> {
-
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
@@ -289,17 +314,17 @@ public class MainActivity extends AppCompatActivity
             return "Done";
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             dialog.hide();
+            setUpScreen();
         }
     }
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-
-
     }
 
     @Override
@@ -330,31 +355,35 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-
-        return super.onOptionsItemSelected(item);
-    }
     private void loadHomeFragment() {
         HomeFragment homeFragment = new HomeFragment();
         android.app.FragmentManager fragmentManager = getFragmentManager();
         android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.root_layout, homeFragment);
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
         fragmentManager.executePendingTransactions();
-
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(receiver, filter);
 
+    }
+    private void loadMessagesFragment() {
+        MessagesFragment messagesFragment = new MessagesFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, messagesFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
+    }
+    private void loadContactsFragment() {
+        ContactsFragment contactsFragment = new ContactsFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, contactsFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
     }
     private void loadAboutFragment() {
         AboutFragment aboutFragment = new AboutFragment();
@@ -364,7 +393,42 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
     }
+    private void loadAppsFragment() {
+        AppsFragment appFragment = new AppsFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, appFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
+    }
+    private void loadNetworkFragment() {
+        NetworkFragment networkFragment = new NetworkFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, networkFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
+    }
+    private void loadPeopleFragment() {
+        PeopleFragment peopleFragment = new PeopleFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.root_layout, peopleFragment);
+        fragmentTransaction.commit();
+        fragmentManager.executePendingTransactions();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.refresh) {
+           loadContent();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -384,50 +448,44 @@ public class MainActivity extends AppCompatActivity
             };
 
             finalHandler.postDelayed(changeView, 400);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastFragment", "Home");
+            editor.commit();
 
         } else if (id == R.id.nav_contacts) {
-            ContactsFragment contactsFragment = new ContactsFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, contactsFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            loadContactsFragment();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastFragment", "Contacts");
+            editor.commit();
 
         } else if (id == R.id.nav_messages) {
-            MessagesFragment messagesFragment = new MessagesFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, messagesFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            loadMessagesFragment();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastFragment", "Messages");
+            editor.commit();
 
          } else if(id == R.id.nav_people) {
-            PeopleFragment peopleFragment = new PeopleFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, peopleFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            loadPeopleFragment();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastFragment", "People");
+            editor.commit();
         } else if(id == R.id.nav_apps) {
-
-            AppsFragment appFragment = new AppsFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, appFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
-
+            loadAppsFragment();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastFragment", "Apps");
+            editor.commit();
 
         } else if(id == R.id.nav_network) {
-            NetworkFragment networkFragment = new NetworkFragment();
-            android.app.FragmentManager fragmentManager = getFragmentManager();
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.root_layout, networkFragment);
-            fragmentTransaction.commit();
-            fragmentManager.executePendingTransactions();
+            loadNetworkFragment();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastFragment", "Network");
+            editor.commit();
 
         } else if(id == R.id.nav_about) {
             loadAboutFragment();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("lastFragment", "About");
+            editor.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -438,7 +496,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     //grant permissions on run time
