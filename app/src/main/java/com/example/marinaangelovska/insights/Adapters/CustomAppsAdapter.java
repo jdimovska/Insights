@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by marinaangelovska on 2/2/18.
  */
-
+// CustomAppsAdapter
 public class CustomAppsAdapter extends ArrayAdapter {
     Application application;
     TextView appName;
